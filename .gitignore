@@ -60,3 +60,7 @@ next-env.d.ts
 
 # Migrate Files
 docs/migrate*
+
+# Issue tracking pindah ke hub ~/Documents/applications (satu beads untuk semua project).
+# .beads di sini jangan dihidupkan lagi: pernah bikin DB corrupt saat checkout branch.
+.beads/

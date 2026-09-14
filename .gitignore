@@ -64,3 +64,7 @@ docs/migrate*
 # Issue tracking pindah ke hub ~/Documents/applications (satu beads untuk semua project).
 # .beads di sini jangan dihidupkan lagi: pernah bikin DB corrupt saat checkout branch.
 .beads/
+
+# Izin Claude Code khusus mesin ini (berisi path absolut + nama MCP lokal).
+# settings.json TETAP ikut repo; yang .local jangan.
+.claude/settings.local.json

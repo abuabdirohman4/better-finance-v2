@@ -75,30 +75,31 @@ export function CalculationBalanceCard({ account, liveRealityCheck, hideBalances
           </span>
         </div>
 
-        {/* Difference box */}
-        {diff != null && (
-          <div className="border-t border-gray-300 pt-4">
-          <div className={`rounded-xl border px-4 py-3 text-center ${diffColorClass(diff)}`}>
+        {/* Difference box — always rendered (invisible when empty) so typing the first value doesn't push the form down */}
+        <div
+          className={`border-t border-gray-300 pt-4 ${diff == null ? "invisible" : ""}`}
+          aria-hidden={diff == null}
+        >
+          <div className={`rounded-xl border px-4 py-3 text-center ${diffColorClass(diff ?? 0)}`}>
             <p className="text-lg font-bold">
-              {hideBalances
+              {diff == null || hideBalances
                 ? MASK
                 : diff === 0
                   ? "✓"
                   : formatCurrency(diff, "signs")}
             </p>
-            <p className="text-xs mt-0.5 opacity-80">{diffLabel(diff)}</p>
+            <p className="text-xs mt-0.5 opacity-80">{diffLabel(diff ?? 0)}</p>
           </div>
-          </div>
-        )}
+        </div>
 
-        {/* Footer: last updated */}
-        {account.last_reality_check_at && (
-          <div className="text-right mt-1">
+        {/* Footer: last updated — fixed-height row so the first save doesn't shift content below */}
+        <div className="text-right mt-1 h-4">
+          {account.last_reality_check_at && (
             <span className="text-xs text-gray-400">
               Updated {formatLastUpdated(account.last_reality_check_at)}
             </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

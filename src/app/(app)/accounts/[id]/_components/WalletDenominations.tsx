@@ -100,13 +100,20 @@ export function WalletDenominations({ accountId, currentBalance, onLiveTotal, on
   }
 
   if (query.isLoading) {
+    // Skeleton mirrors the real layout (11 cells + button) so the swap doesn't change page height
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-        <div className="grid grid-cols-3 gap-3">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <div key={i} className="animate-pulse bg-gray-100 rounded-2xl h-20" />
-          ))}
+      <div className="space-y-3">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+          <div className="grid grid-cols-3 gap-3">
+            {ALL_DENOMINATIONS.map(({ denomination, note_type }) => (
+              <div key={denomKey(note_type, denomination)} className="flex flex-col items-center gap-1.5">
+                <div className="animate-pulse bg-gray-100 rounded-lg h-7 w-full" />
+                <div className="animate-pulse bg-gray-100 rounded-xl h-[42px] w-full" />
+              </div>
+            ))}
+          </div>
         </div>
+        <div className="animate-pulse bg-gray-200 rounded-2xl h-14" />
       </div>
     );
   }
@@ -148,8 +155,8 @@ export function WalletDenominations({ accountId, currentBalance, onLiveTotal, on
         {mutation.isPending ? "Menyimpan..." : "Update Wallet"}
       </button>
 
-      {/* Success card — shown after save */}
-      {mutation.isSuccess && savedTotal !== null && savedDiff !== null && (
+      {/* Success card — stays mounted during re-save (keyed on saved snapshot, not mutation status) so page height doesn't shrink */}
+      {!mutation.isError && savedTotal !== null && savedDiff !== null && (
         <div className="bg-green-50 border border-green-200 rounded-2xl px-5 py-4 space-y-1.5">
           <p className="text-green-800 font-bold text-base flex items-center gap-2">
             <span>✅</span> Updated Successfully!

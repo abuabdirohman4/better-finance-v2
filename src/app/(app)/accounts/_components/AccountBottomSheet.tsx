@@ -49,7 +49,7 @@ export function AccountBottomSheet({
   const [includeInNetWorth, setIncludeInNetWorth] = useState(
     account?.include_in_net_worth ?? true
   );
-  const [isWallet, setIsWallet] = useState(account?.is_wallet ?? false);
+  const isWallet = account?.is_wallet ?? false;
   const [isLiability, setIsLiability] = useState(account?.is_liability ?? false);
   const [sortOrder, setSortOrder] = useState(
     account ? String(account.sort_order) : ""

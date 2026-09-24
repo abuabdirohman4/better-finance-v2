@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useWeeklyBudget } from "./_hooks/useWeeklyBudget";
 import { WeeklyBudgetCard } from "./_components/WeeklyBudgetCard";
 import { WeeklyOverallCard } from "./_components/WeeklyOverallCard";

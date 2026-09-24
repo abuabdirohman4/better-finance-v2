@@ -18,6 +18,7 @@
     "db:studio": "drizzle-kit studio",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint": "tsc --noEmit",
     "migrate": "tsx --env-file=.env.local scripts/migrate-sheet.ts"
   },
   "dependencies": {

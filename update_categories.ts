@@ -4,7 +4,7 @@ import { categories } from "./src/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 
 async function main() {
-  const result = await db
+  await db
     .update(categories)
     .set({ is_active: true })
     .where(

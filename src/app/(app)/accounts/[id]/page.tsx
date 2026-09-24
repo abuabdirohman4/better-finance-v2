@@ -2,16 +2,14 @@
 
 import React, { use, useState, useTransition } from "react";
 import Link from "next/link";
-import { ChevronLeft, Pencil, Wallet } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAccountAction, updateRealityCheckAction, getAccountTypesAction } from "../actions";
-import { formatCurrency } from "@/lib/helper";
 import { CalculationBalanceCard } from "./_components/CalculationBalanceCard";
 import { RealityCheckForm } from "./_components/RealityCheckForm";
 import { WalletDenominations } from "./_components/WalletDenominations";
 import { AccountBottomSheet } from "../_components/AccountBottomSheet";
 import { accountKeys, dashboardKeys } from "@/lib/query";
-import { getAccountVisual } from "@/lib/accountVisuals";
 import { usePrivacyStore } from "@/stores/privacyStore";
 import { useTranslations } from "next-intl";
 
@@ -121,9 +119,6 @@ export default function AccountDetailPage({
     queryClient.invalidateQueries({ queryKey: accountKeys.list() });
     queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
   }
-
-  // ── Derive visual for header ─────────────────────────────────────────────────
-  const visual = account ? getAccountVisual(account.name) : null;
 
   // ── Live preview: show diff while user is typing ─────────────────────────────
   const liveRealityCheck =

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronDown, BarChart3, Calendar, Settings } from "lucide-react";
+import { ChevronLeft, ChevronDown, Settings } from "lucide-react";
 import { useBudgets } from "./_hooks/useBudgets";
 import { BudgetGroup } from "./_components/BudgetGroup";
 import { SavingBudgetSection } from "./_components/SavingBudgetSection";
@@ -48,7 +48,6 @@ export default function BudgetsPage() {
   const overallRemaining = totalBudgeted - totalSpent;
 
   function openCreate() { setEditBudget(null); setSheetOpen(true); }
-  function openEdit(b: BudgetWithSpending) { setEditBudget(b); setSheetOpen(true); }
 
   const [drillBudget, setDrillBudget] = useState<BudgetWithSpending | null>(null);
   const [drillOpen, setDrillOpen] = useState(false);

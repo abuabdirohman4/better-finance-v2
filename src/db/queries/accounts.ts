@@ -162,6 +162,7 @@ export async function updateAccount(
     values.slug = input.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   }
   if (input.current_balance !== undefined) values.current_balance = String(input.current_balance);
+  if (input.account_type_id !== undefined) values.account_type_id = input.account_type_id;
   if (input.asset_category !== undefined) values.asset_category = input.asset_category;
   if (input.investment_group !== undefined)
     values.investment_group = input.investment_group?.trim() || null;

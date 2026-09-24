@@ -60,6 +60,8 @@
     "deleteFailed": "Gagal menghapus akun.",
     "noTypes": "Belum ada tipe akun",
     "selectType": "Pilih tipe akun",
+    "accountType": "Tipe akun",
+    "invalidAccountType": "Tipe akun tidak valid.",
     "notFound": "Akun tidak ditemukan",
     "notWallet": "Bukan akun wallet",
     "amountNotNegative": "Jumlah tidak boleh negatif",

@@ -149,6 +149,7 @@ Enum: `"liquid" | "investment"` (lihat `src/lib/constants.ts`; DB CHECK constrai
 - **investment** = non-liquid → TIDAK muncul di `/accounts`, hanya kartu per-akun di Net Worth (`/assets`). Buat akun investment dari `/accounts` → redirect ke `/assets` setelah save.
 - Non-liquid derive: filter `!== "liquid"` (bukan `=== "non-liquid"` — string itu tak pernah ada di DB). Sengaja robust kalau enum ditambah lagi.
 `getAccountsWithType(userId)` return semua akun; `/accounts` page filter `=== "liquid"`, Net Worth pakai `!== "liquid"` untuk non-liquid.
+- **Account type** (`account_type_id` → account_types Cash/Bank/E-wallet) = label kosmetik — editable saat edit akun (bf-7m3). Tidak ada logic yang bergantung padanya: wallet denominations ikut `is_wallet`, liquid/investment ikut `asset_category`, visual ikut nama. Server wajib cek type milik user (`getAccountTypes`) di create + update.
 
 ## Goals: `collected_amount` derived (bf-4ln)
 

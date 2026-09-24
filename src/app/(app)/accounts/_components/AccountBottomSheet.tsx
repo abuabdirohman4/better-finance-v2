@@ -30,8 +30,12 @@ export function AccountBottomSheet({
   const tc = useTranslations("common");
   // ── Form state ──────────────────────────────────────────────────────────────
   const [name, setName] = useState(account?.name ?? "");
+  // Edit: resolve current type id from slug (unique per user); AccountRow has no account_type_id.
+  const originalTypeId = account
+    ? (accountTypes.find((type) => type.slug === account.account_type_slug)?.id ?? "")
+    : "";
   const [accountTypeId, setAccountTypeId] = useState(
-    account ? "" : (accountTypes[0]?.id ?? "")
+    account ? originalTypeId : (accountTypes[0]?.id ?? "")
   );
   const [balance, setBalance] = useState(
     account ? String(account.current_balance) : "0"
@@ -68,10 +72,9 @@ export function AccountBottomSheet({
 
   // Sync accountTypeId saat accountTypes pertama kali load (race condition: sheet buka sebelum query selesai)
   useEffect(() => {
-    if (mode === "create" && accountTypes.length > 0 && !accountTypeId) {
-      setAccountTypeId(accountTypes[0].id);
-    }
-  }, [accountTypes, mode, accountTypeId]);
+    if (accountTypes.length === 0 || accountTypeId) return;
+    setAccountTypeId(mode === "create" ? accountTypes[0].id : originalTypeId);
+  }, [accountTypes, mode, accountTypeId, originalTypeId]);
 
   // Close on Escape
   useEffect(() => {
@@ -117,6 +120,8 @@ export function AccountBottomSheet({
       } else {
         const res = await updateAccountAction(account!.id, {
           name: name.trim() !== account!.name ? name.trim() : undefined,
+          account_type_id:
+            accountTypeId && accountTypeId !== originalTypeId ? accountTypeId : undefined,
           current_balance: parsedBalance !== account!.current_balance ? parsedBalance : undefined,
           asset_category:
             assetCategory !== account!.asset_category ? assetCategory : undefined,
@@ -201,21 +206,19 @@ export function AccountBottomSheet({
             />
           </div>
 
-          {/* Tipe Akun — hanya saat create */}
-          {mode === "create" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tipe Akun <span className="text-red-500">*</span>
-              </label>
-              <SingleSelect
-                value={accountTypeId}
-                onChange={setAccountTypeId}
-                searchable={false}
-                options={accountTypes.map((t) => ({ value: t.id, label: t.name }))}
-                placeholder={accountTypes.length === 0 ? t("noTypes") : t("selectType")}
-              />
-            </div>
-          )}
+          {/* Account type — create + edit (bf-7m3: cosmetic label, nothing depends on it) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("accountType")} <span className="text-red-500">*</span>
+            </label>
+            <SingleSelect
+              value={accountTypeId}
+              onChange={setAccountTypeId}
+              searchable={false}
+              options={accountTypes.map((type) => ({ value: type.id, label: type.name }))}
+              placeholder={accountTypes.length === 0 ? t("noTypes") : t("selectType")}
+            />
+          </div>
 
           {/* Kategori Aset */}
           <div>

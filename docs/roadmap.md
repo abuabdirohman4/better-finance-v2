@@ -31,7 +31,7 @@
 | B2 | `bf-6rl` | 7 | `review-goals-budget` | goal.account_id + pre-fill. **Cek plan vs model sub-produk** (goal per produk = account_id ke sub-akun) |
 | B2 | `bf-ayj` | 5 | ↑ | budget_period (gaji tgl 25 → bulan depan). **Validasi plan lama dulu** |
 | B3 | `bf-9vf` | 5 | `review-settings` | settings + privacy persist. Cek plan 07-22 masih valid |
-| B3 | `bf-7m3` | 1-2 | gabung mana saja | edit tipe akun; belum ada plan |
+| B3 | `bf-7m3` | 1-2 | gabung mana saja | edit tipe akun; plan docs/plans/2026-09-24-bf-7m3-edit-account-type.md |
 
 ### Fase C — Cutover: berhenti spreadsheet
 

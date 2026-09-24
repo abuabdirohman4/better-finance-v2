@@ -50,6 +50,11 @@ export async function createAccountAction(
       return { success: false, message: parsed.error.issues[0].message };
     }
 
+    const types = await getAccountTypes(user.id);
+    if (!types.some((type) => type.id === parsed.data.account_type_id)) {
+      return { success: false, message: (await getTranslations("accounts"))("invalidAccountType") };
+    }
+
     const id = await createAccount(user.id, parsed.data);
     return { success: true, data: { id } };
   } catch (error) {
@@ -67,6 +72,17 @@ export async function updateAccountAction(
     const parsed = updateAccountSchema.safeParse(input);
     if (!parsed.success) {
       return { success: false, message: parsed.error.issues[0].message };
+    }
+
+    const t = await getTranslations("accounts");
+    const account = await getAccountById(user.id, accountId);
+    if (!account) return { success: false, message: t("notFound") };
+
+    if (parsed.data.account_type_id !== undefined) {
+      const types = await getAccountTypes(user.id);
+      if (!types.some((type) => type.id === parsed.data.account_type_id)) {
+        return { success: false, message: t("invalidAccountType") };
+      }
     }
 
     await updateAccount(user.id, accountId, parsed.data);

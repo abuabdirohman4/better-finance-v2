@@ -60,6 +60,8 @@
     "deleteFailed": "Failed to delete account.",
     "noTypes": "No account types",
     "selectType": "Select account type",
+    "accountType": "Account type",
+    "invalidAccountType": "Invalid account type.",
     "notFound": "Account not found",
     "notWallet": "Not a wallet account",
     "amountNotNegative": "Amount cannot be negative",

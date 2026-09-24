@@ -177,7 +177,7 @@ export function AccountBottomSheet({
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-gray-900">
-            {mode === "create" ? "Tambah Akun" : "Edit Akun"}
+            {mode === "create" ? t("addAccount") : t("editAccount")}
           </h2>
           <button
             onClick={handleClose}
@@ -193,7 +193,7 @@ export function AccountBottomSheet({
           {/* Nama */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nama Akun <span className="text-red-500">*</span>
+              {t("nameLabel")} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -223,7 +223,7 @@ export function AccountBottomSheet({
           {/* Kategori Aset */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kategori Aset
+              {t("assetCategoryLabel")}
             </label>
             <SingleSelect
               value={assetCategory}
@@ -233,8 +233,8 @@ export function AccountBottomSheet({
               }}
               searchable={false}
               options={[
-                { value: "liquid", label: "🟢 Liquid — uang cair (Bank/Cash/E-wallet)" },
-                { value: "investment", label: "📈 Investment — Reksadana/Saham/Emas/dll" },
+                { value: "liquid", label: t("assetCategoryLiquidOption") },
+                { value: "investment", label: t("assetCategoryInvestmentOption") },
               ]}
             />
           </div>
@@ -243,7 +243,7 @@ export function AccountBottomSheet({
           {assetCategory === "investment" && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Group (optional)
+                {t("investmentGroupLabel")}
               </label>
               <input
                 type="text"
@@ -259,7 +259,7 @@ export function AccountBottomSheet({
           {/* Saldo */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {mode === "create" ? "Saldo Awal" : "Saldo"}
+              {mode === "create" ? t("initialBalanceLabel") : t("balanceLabel")}
             </label>
             <input
               type="number"
@@ -281,21 +281,21 @@ export function AccountBottomSheet({
               className="w-4 h-4 accent-blue-600 rounded"
             />
             <label htmlFor="include-net-worth" className="text-sm text-gray-700">
-              Masukkan ke Net Worth
+              {t("includeInNetWorthLabel")}
             </label>
           </div>
 
           {/* Urutan */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Urutan (opsional)
+              {t("sortOrderLabel")}
             </label>
             <input
               type="number"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
               min={1}
-              placeholder="Auto"
+              placeholder={t("autoPlaceholder")}
               className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -309,7 +309,7 @@ export function AccountBottomSheet({
             disabled={isPending}
             className="w-full bg-linear-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 rounded-xl disabled:opacity-60 transition-opacity"
           >
-            {isPending ? "Menyimpan…" : "Simpan"}
+            {isPending ? tc("saving") : tc("save")}
           </button>
         </form>
 
@@ -321,7 +321,7 @@ export function AccountBottomSheet({
                 onClick={() => setConfirmDelete(true)}
                 className="w-full text-red-600 font-medium py-2.5 rounded-xl border border-red-200 hover:bg-red-50 transition-colors text-sm"
               >
-                Hapus Akun
+                {t("deleteAccount")}
               </button>
             ) : (
               <div className="flex items-center gap-3">
@@ -330,14 +330,14 @@ export function AccountBottomSheet({
                   onClick={() => setConfirmDelete(false)}
                   className="px-4 py-2 text-sm rounded-xl border border-gray-300 hover:bg-gray-50 transition-colors"
                 >
-                  Batal
+                  {tc("cancel")}
                 </button>
                 <button
                   onClick={handleDelete}
                   disabled={isDeleting}
                   className="px-4 py-2 text-sm rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-60 transition-colors"
                 >
-                  {isDeleting ? "Menghapus…" : "Hapus"}
+                  {isDeleting ? tc("processing") : tc("delete")}
                 </button>
               </div>
             )}

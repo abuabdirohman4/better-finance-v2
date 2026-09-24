@@ -75,7 +75,18 @@
     "currentBalance": "Saldo Saat Ini",
     "realityBalance": "Saldo Nyata",
     "investmentGroupPlaceholder": "mis. Reksadana, Emas, Saham — otomatis dari nama jika kosong",
-    "acrossCount": "Dari {count} akun"
+    "acrossCount": "Dari {count} akun",
+    "nameLabel": "Nama Akun",
+    "assetCategoryLabel": "Kategori Aset",
+    "assetCategoryLiquidOption": "🟢 Liquid — uang cair (Bank/Cash/E-wallet)",
+    "assetCategoryInvestmentOption": "📈 Investment — Reksadana/Saham/Emas/dll",
+    "investmentGroupLabel": "Grup (Opsional)",
+    "initialBalanceLabel": "Saldo Awal",
+    "balanceLabel": "Saldo",
+    "includeInNetWorthLabel": "Masukkan ke Net Worth",
+    "sortOrderLabel": "Urutan (Opsional)",
+    "autoPlaceholder": "Auto",
+    "deleteAccount": "Hapus Akun"
   },
   "transactions": {
     "title": "Transaksi",

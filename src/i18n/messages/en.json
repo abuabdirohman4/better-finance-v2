@@ -75,7 +75,18 @@
     "currentBalance": "Current Balance",
     "realityBalance": "Reality Balance",
     "investmentGroupPlaceholder": "e.g. Reksadana, Emas, Saham — auto from name if empty",
-    "acrossCount": "Across {count} accounts"
+    "acrossCount": "Across {count} accounts",
+    "nameLabel": "Account name",
+    "assetCategoryLabel": "Asset category",
+    "assetCategoryLiquidOption": "🟢 Liquid — cash on hand (Bank/Cash/E-wallet)",
+    "assetCategoryInvestmentOption": "📈 Investment — Mutual funds/Stocks/Gold/etc",
+    "investmentGroupLabel": "Group (Optional)",
+    "initialBalanceLabel": "Initial balance",
+    "balanceLabel": "Balance",
+    "includeInNetWorthLabel": "Include in Net Worth",
+    "sortOrderLabel": "Sort order (Optional)",
+    "autoPlaceholder": "Auto",
+    "deleteAccount": "Delete account"
   },
   "transactions": {
     "title": "Transactions",

@@ -78,13 +78,15 @@ export function getAllWeekInfos(year: number, month: number): WeekInfo[] {
   return Array.from({ length: count }, (_, i) => getWeekInfo(year, month, i + 1));
 }
 
-/** Hitung minggu aktif saat ini (1-based) */
-export function getCurrentWeekNumber(year: number, month: number): number {
-  const now = new Date();
+/**
+ * Week default saat membuka bulan (1-based): bulan berjalan → minggu berjalan,
+ * bulan lain (lalu/depan) → Week 1 (disengaja, bukan fallback).
+ */
+export function getCurrentWeekNumber(year: number, month: number, now: Date = new Date()): number {
   if (now.getFullYear() !== year || now.getMonth() + 1 !== month) return 1;
   const infos = getAllWeekInfos(year, month);
   for (let i = infos.length - 1; i >= 0; i--) {
     if (now >= infos[i].startDate) return i + 1;
   }
-  return 1;
+  return 1; // tak terjangkau: now selalu ≥ tanggal 1 bulan berjalan
 }

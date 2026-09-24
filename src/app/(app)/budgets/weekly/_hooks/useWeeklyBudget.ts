@@ -13,7 +13,12 @@ const EATING_CATEGORIES = ["Dining Out", "Food", "Fruits", "Groceries", "Grab Cr
 export function useWeeklyBudget(year: number, month: number) {
   const weeksInMonth = useMemo(() => getAllWeekInfos(year, month).length, [year, month]);
   const defaultWeek = useMemo(() => getCurrentWeekNumber(year, month), [year, month]);
-  const [selectedWeek, setSelectedWeek] = useState(defaultWeek);
+
+  // Pilihan week terikat ke bulannya — ganti bulan/tahun otomatis balik ke defaultWeek.
+  const monthKey = `${year}-${month}`;
+  const [picked, setPicked] = useState<{ monthKey: string; week: number } | null>(null);
+  const selectedWeek = picked?.monthKey === monthKey ? picked.week : defaultWeek;
+  const setSelectedWeek = (week: number) => setPicked({ monthKey, week });
 
   // Monthly budgets (eating only)
   const budgetQuery = useQuery({

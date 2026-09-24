@@ -146,7 +146,7 @@ npm run format     # prettier --write
 
 Enum: `"liquid" | "investment"` (lihat `src/lib/constants.ts`; DB CHECK constraint `accounts_asset_category_check` juga 2 nilai). Property/other DIHAPUS (2026-07-24, bf-yts) — tambah balik kalau benar butuh.
 - **liquid** = uang siap pakai (Wallet, Bank, e-wallet) → muncul di halaman `/accounts`, dasar "uang bebas" wishlist + agregat kartu Accounts di Net Worth.
-- **investment** = non-liquid → TIDAK muncul di `/accounts`, hanya kartu per-akun di Net Worth (`/assets`). Buat akun investment dari `/accounts` → redirect ke `/assets` setelah save.
+- **investment** = non-liquid → TIDAK muncul di `/accounts`, hanya kartu per-akun di Net Worth (`/net-worth`). Buat akun investment dari `/accounts` → redirect ke `/net-worth` setelah save.
 - Non-liquid derive: filter `!== "liquid"` (bukan `=== "non-liquid"` — string itu tak pernah ada di DB). Sengaja robust kalau enum ditambah lagi.
 `getAccountsWithType(userId)` return semua akun; `/accounts` page filter `=== "liquid"`, Net Worth pakai `!== "liquid"` untuk non-liquid.
 - **Account type** (`account_type_id` → account_types Cash/Bank/E-wallet) = label kosmetik — editable saat edit akun (bf-7m3). Tidak ada logic yang bergantung padanya: wallet denominations ikut `is_wallet`, liquid/investment ikut `asset_category`, visual ikut nama. Server wajib cek type milik user (`getAccountTypes`) di create + update.
@@ -161,7 +161,7 @@ Enum: `"liquid" | "investment"` (lihat `src/lib/constants.ts`; DB CHECK constrai
 
 ## Feature Pages (`src/app/(app)/`)
 
-`accounts` · `assets` (Net Worth) + `assets/[group]` (detail sub-produk investasi) · `budgets` · `goals` · `settings` · `transactions` · `wishlist`. Semua ikut Page Pattern di atas.
+`accounts` · `net-worth` (Net Worth) + `net-worth/[group]` (detail sub-produk investasi) · `budgets` · `goals` · `settings` · `transactions` · `wishlist`. Semua ikut Page Pattern di atas.
 
 ### `/budgets/categories` — Manage Categories (bf-wrp)
 Full CRUD halaman kelola kategori. Entry point: link "Manage Categories" di `/budgets`.
@@ -190,10 +190,10 @@ Full CRUD halaman kelola kategori. Entry point: link "Manage Categories" di `/bu
 `accounts.investment_group` (text nullable) = grup tampilan: `Reksadana | Emas | Saham | USD | Crypto | BPJS`. **Kolom eksplisit = sumber kebenaran**; nama akun cuma default saat kosong (`deriveInvestmentGroup` di `src/lib/investment.ts` — prefix sebelum `":"`, RD* → `Reksadana`). Akun investment tanpa grup (mis. Jago) → kartu sendiri di Net Worth, key = id akun.
 
 - `src/lib/investment.ts`: `deriveInvestmentGroup(name)` + `productLabel(name)` (`"Emas : Antam 1g"` → `"Antam 1g"`). Dipakai query layer, picker transaksi, halaman detail, migrate script.
-- `getAssets` return `investmentGroups: { key, label, total, items }[]` (key = `investment_group` ?? id akun) — agregasi sekali di query, dipakai `/assets` + `/assets/[group]`.
-- `/assets` = kartu per grup → tap → **`/assets/[group]`** (detail sub-produk). Detail page pakai `useAssets()` yang sama + filter client — tak ada query/action/hook baru.
+- `getAssets` return `investmentGroups: { key, label, total, items }[]` (key = `investment_group` ?? id akun) — agregasi sekali di query, dipakai `/net-worth` + `/net-worth/[group]`.
+- `/net-worth` = kartu per grup → tap → **`/net-worth/[group]`** (detail sub-produk). Detail page pakai `useAssets()` yang sama + filter client — tak ada query/action/hook baru.
 - Picker transaksi (`TransactionForm`, `FilterBar`): akun investment pakai `group: investment_group` (optgroup) + label dipendekkan `productLabel`. `MultiSelect` search mencocokkan label **dan** group.
-- **Tracker P&L (bf-3ai):** `current_balance` = modal/setoran (dari transaksi). `current_value` + `last_valued_at` = harga pasar, **input manual** per sub-produk di `/assets/[group]` (tap baris → editor inline; `updateAccountValueAction` di `assets/actions.ts` → `updateAccountValue` query, ownership + `asset_category==="investment"` + `value>=0` divalidasi server; `null` = hapus valuasi). `AssetRow.pnl = current_value − current_balance` (null kalau belum dinilai). Grup: `totalValue = Σ(current_value ?? current_balance)`, `pnl = Σ pnl`, `valuedCount`. **Net Worth TETAP modal-based** (`current_balance`, parity spreadsheet) — market value & P&L hanya info. Auto price feed = bf-7h2 (nanti, opt-in). Kartu grup di `/assets` tampil P&L kecil hanya kalau `valuedCount > 0`.
+- **Tracker P&L (bf-3ai):** `current_balance` = modal/setoran (dari transaksi). `current_value` + `last_valued_at` = harga pasar, **input manual** per sub-produk di `/net-worth/[group]` (tap baris → editor inline; `updateAccountValueAction` di `net-worth/actions.ts` → `updateAccountValue` query, ownership + `asset_category==="investment"` + `value>=0` divalidasi server; `null` = hapus valuasi). `AssetRow.pnl = current_value − current_balance` (null kalau belum dinilai). Grup: `totalValue = Σ(current_value ?? current_balance)`, `pnl = Σ pnl`, `valuedCount`. **Net Worth TETAP modal-based** (`current_balance`, parity spreadsheet) — market value & P&L hanya info. Auto price feed = bf-7h2 (nanti, opt-in). Kartu grup di `/net-worth` tampil P&L kecil hanya kalau `valuedCount > 0`.
 - Split akun agregat (Emas 1 → 7, Saham 1 → 3, 2026-08-18): row agregat di-**rename** jadi sub terbesar (bukan dinonaktifkan → tak ada akun zombie), sisanya insert baru, opening `opening-2026-nl-<slug-sub>` per sub, opening agregat lama dihapus. Σ per grup tetap → Net Worth tak berubah.
 
 ## Auth: Google OAuth (bf-y6o)

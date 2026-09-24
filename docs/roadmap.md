@@ -159,13 +159,13 @@ Legenda: ✅ done · 🔄 sebagian · ⏳ belum
 | Budgets — drill-down + transfers | ✅ | `/budgets` | Tap kategori → transaksi; Saving/Investing aggregate (bf-z8z, bf-i6e) |
 | Goals — CRUD + integrasi | ✅ | `/goals` | goal_id di transaksi, collected derived (bf-4ln) |
 | Goals — usage ledger | ✅ | `/goals` | Spending ber-goal_id, GoalLedger component (bf-btz) |
-| Net Worth | ✅ | `/assets` | Kartu Accounts agregat + non-liquid + Liabilities section (bf-9v5, bf-3e0) |
+| Net Worth | ✅ | `/net-worth` | Kartu Accounts agregat + non-liquid + Liabilities section (bf-9v5, bf-3e0) |
 | Wishlist | ✅ | `/wishlist` | CRUD + promote→goal + affordability (bf-ez2) |
 | UI kit — minimal | ✅ | `src/components/ui/` | Button, Input, Select, MultiSelect, SingleSelect |
 | UI kit — lengkap | 🔄 | `src/components/ui/` | ConfirmDialog ✅; sisa: Toast, DatePicker, dll (bf-qxb) |
-| Akun non-liquid | ✅ | `/accounts` → `/assets` | Enum liquid/investment, redirect ke /assets (bf-yts) |
-| Investment sub-produk + grouping | ✅ | `/assets` + `/assets/[group]` | 1 akun per sub-produk, kartu per grup → detail (bf-z6w) |
-| Investment tracker P&L | ✅ | `/assets/[group]` | current_value input manual + P&L per sub-produk (bf-3ai); auto price = bf-7h2 |
+| Akun non-liquid | ✅ | `/accounts` → `/net-worth` | Enum liquid/investment, redirect ke /net-worth (bf-yts) |
+| Investment sub-produk + grouping | ✅ | `/net-worth` + `/net-worth/[group]` | 1 akun per sub-produk, kartu per grup → detail (bf-z6w) |
+| Investment tracker P&L | ✅ | `/net-worth/[group]` | current_value input manual + P&L per sub-produk (bf-3ai); auto price = bf-7h2 |
 | Goal account linkage | ⏳ | `/goals` | "disimpan di X" + pre-fill transfer (bf-6rl) |
 | Account detail | ⏳ | `/accounts/[id]` | Klik akun → list transaksi (bf-dac) |
 | Settings | ⏳ | `/settings` | Profil, theme, privacy (bf-9vf) |

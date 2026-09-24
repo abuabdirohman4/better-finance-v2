@@ -45,7 +45,7 @@ export default function InvestmentGroupPage({
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Link
-              href="/assets"
+              href="/net-worth"
               className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors"
             >
               <ChevronLeft className="w-7 h-7" />
@@ -76,7 +76,7 @@ export default function InvestmentGroupPage({
         ) : !group ? (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
             <p className="text-gray-500 text-sm">{t("groupNotFound")}</p>
-            <Link href="/assets" className="text-blue-600 text-sm font-semibold mt-2 inline-block">
+            <Link href="/net-worth" className="text-blue-600 text-sm font-semibold mt-2 inline-block">
               Back to Net Worth
             </Link>
           </div>

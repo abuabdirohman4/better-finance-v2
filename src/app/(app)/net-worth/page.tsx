@@ -142,7 +142,7 @@ function GroupCard({ group, hideBalances }: { group: InvestmentGroupRow; hideBal
 
   return (
     <Link
-      href={`/assets/${encodeURIComponent(group.key)}`}
+      href={`/net-worth/${encodeURIComponent(group.key)}`}
       className="block bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden active:scale-95 transition-transform hover:shadow-xl group"
     >
       <div className="flex flex-col items-center p-3 pb-3">

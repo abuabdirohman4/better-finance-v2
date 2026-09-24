@@ -18,7 +18,7 @@ export interface AssetRow {
 
 /** Satu kartu di Net Worth: grup investasi (Emas, Reksadana, ...) atau akun tanpa grup. */
 export interface InvestmentGroupRow {
-  key: string;   // investment_group, atau id akun kalau tak bergrup — dipakai di URL /assets/[group]
+  key: string;   // investment_group, atau id akun kalau tak bergrup — dipakai di URL /net-worth/[group]
   label: string; // nama tampil grup
   total: number;       // Σ current_balance (modal) — angka utama, dipakai Net Worth
   totalValue: number;  // Σ (current_value ?? current_balance) — produk belum dinilai dianggap at cost

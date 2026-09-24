@@ -65,7 +65,7 @@ export default function DashboardPage() {
 
       <div className="px-3 pb-8 mt-6 space-y-6">
         {/* Net Worth card */}
-        <Link href="/assets" className="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow group">
+        <Link href="/net-worth" className="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow group">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">{td("netWorth")}</h2>
             <div className="flex items-center space-x-2">

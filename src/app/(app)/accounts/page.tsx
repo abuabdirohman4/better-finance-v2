@@ -45,13 +45,13 @@ export default function AccountsPage() {
     setCreateOpen(false);
     queryClient.invalidateQueries({ queryKey: accountKeys.list() });
     queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-    // Non-liquid accounts live on /assets, so send the user there after creating one.
-    if (assetCategory && assetCategory !== "liquid") router.push("/assets");
+    // Non-liquid accounts live on /net-worth, so send the user there after creating one.
+    if (assetCategory && assetCategory !== "liquid") router.push("/net-worth");
   };
 
-  // /accounts shows liquid accounts only; non-liquid (investment) lives on /assets.
+  // /accounts shows liquid accounts only; non-liquid (investment) lives on /net-worth.
   const liquidAccounts = accounts?.filter((a) => a.asset_category === "liquid") ?? [];
-  // Liabilities shown in grid but excluded from total (they reduce net worth, shown on /assets)
+  // Liabilities shown in grid but excluded from total (they reduce net worth, shown on /net-worth)
   const total = liquidAccounts
     .filter((a) => a.include_in_net_worth && !a.is_liability)
     .reduce((sum, a) => sum + a.current_balance, 0);

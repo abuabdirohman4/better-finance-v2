@@ -31,7 +31,7 @@ export function ConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-6">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={loading ? undefined : onCancel} />
+      <div className={`absolute inset-0 bg-black/50 backdrop-blur-sm ${loading ? "" : "cursor-pointer"}`} onClick={loading ? undefined : onCancel} />
       <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         {message && <p className="mt-2 text-sm text-gray-500">{message}</p>}

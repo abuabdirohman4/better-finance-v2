@@ -10,9 +10,10 @@ html {
 /* Tailwind v4 hapus cursor:pointer default di button — kembalikan (kecuali disabled) */
 @layer base {
   button:not(:disabled),
-  [role="button"]:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
   label[for],
-  summary {
+  summary,
+  select {
     cursor: pointer;
   }
 }

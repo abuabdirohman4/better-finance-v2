@@ -94,7 +94,7 @@ export function GroupRenameBottomSheet({
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"
+        className="fixed inset-0 bg-black/40 z-40 cursor-pointer transition-opacity duration-300"
         style={{ opacity: visible ? 1 : 0 }}
         onClick={handleClose}
       />

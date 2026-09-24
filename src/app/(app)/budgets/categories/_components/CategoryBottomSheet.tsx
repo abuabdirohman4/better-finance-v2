@@ -104,7 +104,7 @@ export function CategoryBottomSheet({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"
+      <div className="fixed inset-0 bg-black/40 z-40 cursor-pointer transition-opacity duration-300"
         style={{ opacity: visible ? 1 : 0 }} onClick={handleClose} />
       <div className="fixed bottom-0 left-1/2 w-full max-w-md bg-white rounded-t-3xl z-50 shadow-2xl transition-transform duration-300 max-h-[90vh] overflow-y-auto"
         style={{ transform: visible ? "translate(-50%, 0)" : "translate(-50%, 100%)" }}>

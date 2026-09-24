@@ -104,7 +104,7 @@ export function GoalBottomSheet({ open, onClose, goal, onSave, onDelete }: Props
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-40 cursor-pointer transition-opacity duration-300 ${
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -115,7 +115,7 @@ export function GoalBottomSheet({ open, onClose, goal, onSave, onDelete }: Props
         className={`fixed bottom-0 left-1/2 w-full max-w-md bg-white rounded-t-3xl z-50 shadow-2xl transition-transform duration-300 ease-out`}
         style={{ transform: open ? "translate(-50%, 0)" : "translate(-50%, 100%)" }}
       >
-        <div className="flex justify-center pt-3 pb-2" onClick={onClose}>
+        <div className="flex justify-center pt-3 pb-2 cursor-pointer" onClick={onClose}>
           <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
         </div>
 

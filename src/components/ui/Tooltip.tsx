@@ -38,7 +38,7 @@ export function Tooltip({
 
       {open && (
         <>
-          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-30 cursor-pointer" onClick={() => setOpen(false)} />
           <div
             className={cn(
               "absolute z-40 top-full mt-1.5 w-60 max-w-[calc(100vw-3rem)] bg-gray-900 text-white rounded-xl p-3 shadow-xl text-xs space-y-1.5",

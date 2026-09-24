@@ -2,8 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Features
 
+- Accounts, transactions (spending / earning / transfer) with atomic balance updates
+- Monthly + weekly budgets, goals with a transaction-derived ledger
 - Goal-funded spending: tag a spending to a goal — it reduces the goal and stays out of your monthly budget.
 - Saving budget per goal: monthly target comes from each goal's monthly contribution.
+- Net Worth with investment sub-products and manual market value (P&L)
+- Debts & receivables (`/debts`): per-person AP/AR with due dates, collect/repay as tagged transfers
+- Wishlist with affordability check
+- English + Indonesian UI
 
 ## Getting Started
 

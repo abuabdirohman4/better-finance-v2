@@ -14,6 +14,8 @@ export type TransactionType = "spending" | "earning" | "transfer";
 
 export type AssetCategory = "liquid" | "investment";
 
+export type DebtDirection = "receivable" | "payable";
+
 export type GoalType = "sinking" | "wishlist" | "emergency" | "investment" | "business";
 
 export type PlanTier = "free" | "pro" | "family";
@@ -54,9 +56,7 @@ export const DEFAULT_CATEGORIES: Array<{ name: string; slug: string; group: Cate
   { name: "Tools", slug: "tools", group: "living" },
   { name: "Transport", slug: "transport", group: "living" },
   { name: "Other Spend", slug: "other-spend", group: "living" },
-  // saving
-  { name: "AP", slug: "ap", group: "saving" },
-  { name: "AR", slug: "ar", group: "saving" },
+  // saving (AP/AR removed, bf-13t: debts live in the debts table)
   { name: "Retained", slug: "retained", group: "saving" },
   { name: "Sinking", slug: "sinking", group: "saving" },
   { name: "Wishlist", slug: "wishlist", group: "saving" },

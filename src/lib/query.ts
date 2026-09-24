@@ -52,6 +52,12 @@ export const goalKeys = {
   detail: (id: string) => [...goalKeys.all, "detail", id] as const,
 };
 
+export const debtKeys = {
+  all: ["debts"] as const,
+  list: () => [...debtKeys.all, "list"] as const,
+  forSelect: () => [...debtKeys.all, "for-select"] as const,
+};
+
 export const assetKeys = {
   all: ["assets"] as const,
   list: () => [...assetKeys.all, "list"] as const,

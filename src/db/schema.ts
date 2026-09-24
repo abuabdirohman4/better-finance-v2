@@ -144,6 +144,7 @@ export const transactions = pgTable(
     category_id: uuid("category_id").references(() => categories.id),
     to_account_id: uuid("to_account_id").references(() => accounts.id),
     goal_id: uuid("goal_id").references(() => savingsGoals.id, { onDelete: "set null" }),
+    debt_id: uuid("debt_id").references(() => debts.id, { onDelete: "set null" }),
     note: text("note"),
     amount: numeric("amount", { precision: 18, scale: 2 }).notNull(),
     source_month: text("source_month"),
@@ -160,6 +161,7 @@ export const transactions = pgTable(
     index("idx_transactions_user_account").on(t.user_id, t.account_id),
     index("idx_transactions_user_category").on(t.user_id, t.category_id),
     index("idx_transactions_goal_id").on(t.goal_id),
+    index("idx_transactions_debt_id").on(t.debt_id),
   ]
 );
 
@@ -212,6 +214,31 @@ export const savingsGoals = pgTable("savings_goals", {
   created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// ── debts (AP/AR, bf-13t) ─────────────────────────────────────────────────────
+// Metadata only. Money moves via transfers tagged transactions.debt_id; outstanding is derived.
+
+export const debts = pgTable(
+  "debts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => userProfiles.id, { onDelete: "cascade" }),
+    direction: text("direction").notNull(), // "receivable" | "payable" (DB CHECK)
+    counterparty: text("counterparty").notNull(),
+    account_id: uuid("account_id")
+      .notNull()
+      .references(() => accounts.id), // ledger account
+    opening_amount: numeric("opening_amount", { precision: 18, scale: 2 }).notNull().default("0"),
+    due_date: date("due_date"),
+    note: text("note"),
+    archived_at: timestamp("archived_at", { withTimezone: true }),
+    created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("idx_debts_user").on(t.user_id, t.direction)]
+);
 
 // ── account_balance_snapshots ─────────────────────────────────────────────────
 

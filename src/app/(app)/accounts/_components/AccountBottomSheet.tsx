@@ -265,10 +265,11 @@ export function AccountBottomSheet({
               type="number"
               value={balance}
               onChange={(e) => setBalance(e.target.value)}
-              min={0}
+              min={isLiability ? undefined : 0}
               placeholder="0"
               className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+            {isLiability && <p className="text-xs text-gray-500 mt-1">{t("liabilityBalanceHint")}</p>}
           </div>
 
           {/* Include in net worth */}

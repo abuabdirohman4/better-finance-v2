@@ -212,6 +212,20 @@ Full CRUD halaman kelola kategori. Entry point: link "Manage Categories" di `/bu
 - **Tracker P&L (bf-3ai):** `current_balance` = modal/setoran (dari transaksi). `current_value` + `last_valued_at` = harga pasar, **input manual** per sub-produk di `/net-worth/[group]` (tap baris → editor inline; `updateAccountValueAction` di `net-worth/actions.ts` → `updateAccountValue` query, ownership + `asset_category==="investment"` + `value>=0` divalidasi server; `null` = hapus valuasi). `AssetRow.pnl = current_value − current_balance` (null kalau belum dinilai). Grup: `totalValue = Σ(current_value ?? current_balance)`, `pnl = Σ pnl`, `valuedCount`. **Net Worth TETAP modal-based** (`current_balance`, parity spreadsheet) — market value & P&L hanya info. Auto price feed = bf-7h2 (nanti, opt-in). Kartu grup di `/net-worth` tampil P&L kecil hanya kalau `valuedCount > 0`.
 - Split akun agregat (Emas 1 → 7, Saham 1 → 3, 2026-08-18): row agregat di-**rename** jadi sub terbesar (bukan dinonaktifkan → tak ada akun zombie), sisanya insert baru, opening `opening-2026-nl-<slug-sub>` per sub, opening agregat lama dihapus. Σ per grup tetap → Net Worth tak berubah.
 
+## Debts: AP/AR (bf-13t)
+
+**`debts` = metadata only** (direction `receivable|payable`, counterparty, ledger `account_id`, `opening_amount`, due_date, note, `archived_at`). Money moves as ordinary **transfers tagged `transactions.debt_id`** between a cash account and the debt's **ledger** account (AR, AP, credit card). Same pattern as `goal_id`. `outstanding`/`status` are **derived** (`src/lib/debt.ts`, unit-tested), never stored.
+
+- Ledger direction comes from the account: `is_liability` → payable, else receivable. The server rejects a mismatch at create. `direction` + `account_id` can't be changed after create.
+- Legs (`movementLegs`): lend / repay = cash → ledger; collect / borrow = ledger → cash. Only via `recordDebtMovementAction` / `createDebtAction`, both of which go through `applyTransactionBalancesRpc`.
+- `opening_amount` = part of the debt **already in the ledger balance** (legacy import). A new debt with "money moves now" off does NOT touch balances or Net Worth.
+- `/debts` "Untracked" = ledger owed − Σ outstanding of active debts (legacy AR balance not yet split per person). Archiving a debt with a remainder moves it into Untracked.
+- Tagging from `TransactionForm`: transfer only, must touch the ledger, never together with `goal_id` (`checkDebtTag` + DB CHECK `transactions_goal_debt_exclusive`).
+- **Liability sign = natural**: a liability balance is **negative when owed**. `netWorth = Σ current_balance`. `totalLiabilities` in `getAssets` is the positive "owed" number for display only. Don't reintroduce "subtract a positive liability".
+- AR is `asset_category = 'investment'` (not spendable → out of `/accounts` + wishlist free cash). AP stays liquid + `is_liability`.
+- Gotcha: `pnpm migrate` overwrites AR/AP `current_balance` with the sheet Summary. Re-running it after debts are tracked desyncs outstanding from the ledger.
+- Entry point: link card on `/net-worth` (BottomNav is full at 5 items).
+
 ## Auth: Google OAuth (bf-y6o)
 
 Email/password + **Google OAuth** (`signInWithOAuth`, PKCE via `@supabase/ssr`). Flow: `signInWithGoogle` server action (`signin/actions.ts`) → redirect Google consent → `/auth/callback` (`exchangeCodeForSession`, shared dgn email verification) → `/`.

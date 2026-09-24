@@ -94,7 +94,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
 
   const totalAssets = accountRows
     .filter((a) => a.include_in_net_worth)
-    .reduce((sum, a) => sum + (a.is_liability ? -a.current_balance : a.current_balance), 0);
+    .reduce((sum, a) => sum + a.current_balance, 0); // natural sign: liabilities already negative (bf-13t)
 
   const recentTransactions: RecentTransactionRow[] = txRows.map((t) => ({
     id: t.id,

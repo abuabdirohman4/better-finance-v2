@@ -32,7 +32,7 @@ export interface AssetsSummary {
   liabilities: AssetRow[];
   totalLiquid: number;
   totalNonLiquid: number;
-  totalLiabilities: number;
+  totalLiabilities: number; // positive = owed (−Σ liability balances, natural sign)
   netWorth: number;
   investmentGroups: InvestmentGroupRow[];
 }
@@ -68,7 +68,8 @@ export async function getAssets(userId: string): Promise<AssetsSummary> {
   const totalNonLiquid = nonLiabilityRows
     .filter((r) => r.asset_category !== "liquid")
     .reduce((s, r) => s + Number(r.current_balance), 0);
-  const totalLiabilities = liabilityRows.reduce((s, r) => s + Number(r.current_balance), 0);
+  // Natural sign (bf-13t): liability balance is negative when owed → flip for a positive "owed" total.
+  const totalLiabilities = -liabilityRows.reduce((s, r) => s + Number(r.current_balance), 0);
 
   const toAssetRow = (r: (typeof rows)[number]): AssetRow => {
     const balance = Number(r.current_balance);

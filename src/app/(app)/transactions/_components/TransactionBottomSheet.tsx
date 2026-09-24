@@ -5,7 +5,7 @@ import { X, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { createTransactionAction, updateTransactionAction, deleteTransactionAction } from "../actions";
 import { TransactionForm } from "./TransactionForm";
-import { transactionKeys, accountKeys, dashboardKeys, goalKeys, budgetKeys } from "@/lib/query";
+import { transactionKeys, accountKeys, dashboardKeys, goalKeys, budgetKeys, debtKeys } from "@/lib/query";
 import { useTranslations } from "next-intl";
 import type { AccountRow, CategoryRow } from "@/db/queries/accounts";
 import type { TransactionRow } from "@/db/queries/transactions";
@@ -66,6 +66,7 @@ export function TransactionBottomSheet({
     queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     queryClient.invalidateQueries({ queryKey: goalKeys.all });
     queryClient.invalidateQueries({ queryKey: budgetKeys.all });
+    queryClient.invalidateQueries({ queryKey: debtKeys.all });
   }
 
   function handleSubmit(input: CreateTransactionInput | UpdateTransactionInput) {
@@ -157,6 +158,7 @@ export function TransactionBottomSheet({
               account_id: editTx.account_id,
               to_account_id: editTx.to_account_id,
               goal_id: editTx.goal_id,
+              debt_id: editTx.debt_id,
               category_id: editTx.category_id,
               amount: editTx.amount,
               note: editTx.note,

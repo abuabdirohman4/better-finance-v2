@@ -8,9 +8,10 @@ import { SingleSelect } from "@/components/ui/MultiSelect";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { productLabel } from "@/lib/investment";
-import { transactionKeys } from "@/lib/query";
+import { transactionKeys, debtKeys } from "@/lib/query";
 import { useTranslations } from "next-intl";
 import { getGoalsForTransferAction } from "../actions";
+import { getDebtsForSelectAction } from "@/app/(app)/debts/actions";
 import { goalAllowed } from "../_lib/goalRule";
 import type { AccountRow, CategoryRow } from "@/db/queries/accounts";
 import type { CreateTransactionInput, UpdateTransactionInput } from "@/lib/schemas/transaction";
@@ -27,6 +28,7 @@ interface TransactionFormProps {
     account_id: string;
     to_account_id?: string | null;
     goal_id?: string | null;
+    debt_id?: string | null;
     category_id?: string | null;
     amount: number;
     note?: string | null;
@@ -61,6 +63,7 @@ export function TransactionForm({
   const [accountId, setAccountId] = useState(init?.account_id ?? accounts[0]?.id ?? "");
   const [toAccountId, setToAccountId] = useState(init?.to_account_id ?? "");
   const [goalId, setGoalId] = useState(init?.goal_id ?? "");
+  const [debtId, setDebtId] = useState(init?.debt_id ?? "");
   const [categoryId, setCategoryId] = useState(init?.category_id ?? "");
   const [rawAmount, setRawAmount] = useState(initAmount);
   const [displayAmount, setDisplayAmount] = useState(
@@ -96,6 +99,16 @@ export function TransactionForm({
 
   const goalOptions = goalsForTransfer.map((g) => ({ value: g.id, label: g.name }));
 
+  const { data: debtsRes } = useQuery({
+    queryKey: debtKeys.forSelect(),
+    queryFn: async () => getDebtsForSelectAction(),
+    enabled: txType === "transfer",
+  });
+  // Only debts whose ledger is one side of this transfer can be tagged (server re-checks).
+  const debtOptions = ((debtsRes?.success ? debtsRes.data : []) ?? [])
+    .filter((d) => d.account_id === accountId || d.account_id === toAccountId)
+    .map((d) => ({ value: d.id, label: d.counterparty }));
+
   // Earning → only income categories (group 'earning'); spending → everything else.
   const categoryOptions = categories
     .filter((c) => (txType === "earning" ? c.group_name === "earning" : c.group_name !== "earning"))
@@ -130,6 +143,13 @@ export function TransactionForm({
       to_account_id: txType === "transfer" ? toAccountId || null : null,
       goal_id: goalAllowed(txType) ? goalId || null : null,
       category_id: txType !== "transfer" ? categoryId || null : null,
+      // Picker not loaded yet → keep the existing tag instead of silently clearing it.
+      debt_id:
+        txType !== "transfer"
+          ? null
+          : debtsRes
+            ? debtOptions.some((o) => o.value === debtId) ? debtId : null
+            : debtId || null,
       amount,
       note: note.trim(),
     };
@@ -218,6 +238,23 @@ export function TransactionForm({
             value={goalId}
             onChange={setGoalId}
             placeholder={t("noGoal")}
+            searchable
+            direction="up"
+          />
+        </div>
+      )}
+
+      {/* Untuk Debt — opsional, hanya transfer yang menyentuh akun ledger (AR/AP) */}
+      {txType === "transfer" && debtOptions.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-gray-700">
+            {t("forDebt")} <span className="text-gray-400 text-xs">{t("optional")}</span>
+          </label>
+          <SingleSelect
+            options={debtOptions}
+            value={debtId}
+            onChange={setDebtId}
+            placeholder={t("noDebt")}
             searchable
             direction="up"
           />

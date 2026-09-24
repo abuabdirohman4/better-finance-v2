@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, Wallet, ChevronLeft } from "lucide-react";
+import { Eye, EyeOff, Wallet, ChevronLeft, ChevronRight, HandCoins } from "lucide-react";
 import Link from "next/link";
 import { useAssets } from "./_hooks/useAssets";
 import { formatCurrency } from "@/lib/helper";
@@ -116,6 +116,18 @@ export default function AssetsPage() {
               ))}
             </div>
 
+            {/* Utang/piutang per orang (bf-13t) — AR/AP ledger dirinci di /debts */}
+            <Link
+              href="/debts"
+              className="flex items-center justify-between bg-white rounded-2xl shadow-md border border-gray-100 px-4 py-3 hover:shadow-xl transition-shadow"
+            >
+              <span className="flex items-center gap-2 font-semibold text-gray-900 text-sm">
+                <HandCoins className="w-5 h-5 text-blue-600" />
+                {t("debtsLink")}
+              </span>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </Link>
+
             {/* Liabilities section — hanya tampil jika ada */}
             {(liabilities?.length ?? 0) > 0 && (
               <div>
@@ -193,7 +205,7 @@ function LiabilityCard({ asset, hideBalances }: { asset: AssetRow; hideBalances:
       </div>
       <div className="text-center py-1.5 px-1 mt-auto bg-red-100/50 text-red-600">
         <p className="font-bold text-[9px] truncate">
-          -{hideBalances ? MASK : formatCurrency(asset.current_balance)}
+          {hideBalances ? MASK : formatCurrency(asset.current_balance)}
         </p>
       </div>
     </div>

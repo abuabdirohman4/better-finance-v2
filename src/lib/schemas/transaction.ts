@@ -10,6 +10,7 @@ export const createTransactionSchema = z.object({
   note: z.string().min(1, "Note is required"),
   category_id: z.string().uuid().optional().nullable(),
   goal_id: z.string().uuid().optional().nullable(),
+  debt_id: z.string().uuid().optional().nullable(),
   transaction_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
 });
 
@@ -17,6 +18,7 @@ export const updateTransactionSchema = createTransactionSchema.partial().extend(
   // to_account_id bisa di-unset (null) saat ganti tipe dari transfer
   to_account_id: z.string().uuid().optional().nullable(),
   goal_id: z.string().uuid().optional().nullable(),
+  debt_id: z.string().uuid().optional().nullable(),
 });
 
 export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;

@@ -13,6 +13,8 @@ import {
 import type { CreateTransactionInput, UpdateTransactionInput } from "@/lib/schemas/transaction";
 import { getAccountById, getCategories, applyTransactionBalancesRpc, type CategoryRow } from "@/db/queries/accounts";
 import { getGoalsForSelect, type GoalSelectRow } from "@/db/queries/goals";
+import { getDebtById } from "@/db/queries/debts";
+import { checkDebtTag } from "@/lib/debt";
 import { requireUser } from "@/lib/accessControlServer";
 import { handleApiError, type ServerActionResult } from "@/lib/errorUtils";
 import { createTransactionSchema, updateTransactionSchema } from "@/lib/schemas/transaction";
@@ -86,6 +88,13 @@ export async function createTransactionAction(
       }
     }
 
+    if (validInput.debt_id) {
+      const debt = await getDebtById(user.id, validInput.debt_id);
+      if (!debt) return { success: false, message: (await getTranslations("transactions"))("debtNotFound") };
+      const tagError = checkDebtTag(validInput, debt.account_id);
+      if (tagError) return { success: false, message: (await getTranslations("transactions"))(tagError) };
+    }
+
     const id = await createTransaction(user.id, validInput);
 
     const delta = validInput.transaction_type === "earning" ? validInput.amount : -validInput.amount;
@@ -148,6 +157,23 @@ export async function updateTransactionAction(
       if (!goals.find((g) => g.id === newGoalId)) {
         return { success: false, message: (await getTranslations("transactions"))("goalNotFound") };
       }
+    }
+
+    // Debt tag must still fit the edited transaction (type/accounts may have changed).
+    const newDebtId = "debt_id" in validInput ? validInput.debt_id : old.debt_id;
+    if (newDebtId) {
+      const debt = await getDebtById(user.id, newDebtId);
+      if (!debt) return { success: false, message: (await getTranslations("transactions"))("debtNotFound") };
+      const tagError = checkDebtTag(
+        {
+          transaction_type: newType,
+          account_id: newAccountId,
+          to_account_id: newToAccountId ?? null,
+          goal_id: "goal_id" in validInput ? validInput.goal_id : old.goal_id,
+        },
+        debt.account_id
+      );
+      if (tagError) return { success: false, message: (await getTranslations("transactions"))(tagError) };
     }
 
     // All balance adjustments atomic via Postgres RPC

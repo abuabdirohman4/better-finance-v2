@@ -142,6 +142,7 @@ npm run dev        # dev server (next dev)
 npm run build      # production build — WAJIB lolos sebelum close issue (satu-satunya cara catch typo query/import)
 npm run test:run   # vitest sekali jalan (balance math unit tests)
 npm run test:e2e   # playwright
+npm run lint       # tsc --noEmit (noUnusedLocals/Parameters = gerbang unused-code, app-t17ca79)
 npm run format     # prettier --write
 ```
 > Claude: JANGAN jalankan `build`/`test` sendiri (boros token) — minta user, analisa hasilnya saja.
@@ -203,6 +204,7 @@ Full CRUD halaman kelola kategori. Entry point: link "Manage Categories" di `/bu
 - **Opening balance**: saldo awal (carry 2025) ditambal 1 transaksi `source_month='<year>-Opening'`, tanggal 1 Jan. Liquid: di-derive dari tab Summary (`Summary − mutasi`). **Aset non-liquid**: TIDAK ada di Summary → di-seed manual via SQL, hash `opening-<year>-nl-<slug>`. Task 5 delete opening **PRESERVE** `opening-<year>-nl-*` (jangan hapus seed manual aset).
 - **Gotcha saldo liquid "cocok" walau ada dobel**: opening liquid = `Summary − mutasi`, jadi mutasi kelebihan (dobel) diserap opening → saldo akhir tetap match. Dobel cuma kelihatan di aset non-liquid (tak ada opening penyerap). Cek dup dgn query GROUP BY natural fields HAVING COUNT>1, pisah lintas-month (pasti bug) vs same-month (bisa sah — kategori beda, mis. "Soto 2x" Dining vs Shodaqoh).
 - **Balance amount CHECK**: `amount >= 0`. Opening negatif → pakai `spending` (bukan earning amount negatif).
+- **Budget (`npm run migrate -- 2026 --budgets [--dry]`, bf-noo)**: tab `📈  Budget` sheet `18ii…` (gid 1236804720) via `export?format=csv` (bukan gviz — gviz salah baca header tab ini). Hanya section Earning + Spending; Transfer skip (bf-yz4). Match kategori per section (earning vs non-saving/investing). Skip-existing (`onConflictDoNothing`), konflik dilaporkan. Ambang ≥ 10.000.
 
 ## Investment: sub-produk + grouping (bf-z6w)
 

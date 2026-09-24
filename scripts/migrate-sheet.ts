@@ -4,6 +4,7 @@
  * Usage:
  *   pnpm tsx scripts/migrate-sheet.ts 2026 [--dry]
  *   pnpm tsx scripts/migrate-sheet.ts 2025 [--dry]
+ *   pnpm tsx scripts/migrate-sheet.ts 2026 --budgets [--dry]   (bf-noo: budget targets only)
  *
  * Mode --dry: print rencana insert, tidak commit ke DB.
  *
@@ -19,7 +20,7 @@ import { createHash } from "crypto";
 import { writeFileSync } from "fs";
 import { and, eq, notLike } from "drizzle-orm";
 import { db } from "@/db";
-import { accounts, accountTypes, categories, savingsGoals, transactions } from "@/db/schema";
+import { accounts, accountTypes, budgets, categories, savingsGoals, transactions } from "@/db/schema";
 import { deriveInvestmentGroup } from "@/lib/investment";
 
 // ── Config ────────────────────────────────────────────────────────────────────
@@ -31,20 +32,8 @@ const SHEET_IDS: Record<string, string> = {
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// Kolom equity/liability — skip, belum ada model di v2.
-const EQUITY_COLS = new Set(["OI", "RE", "NET", "AP", "NP", "AR"]);
-
 // Kas + investasi/saving = kolom yang kita proses.
 const ASSET_COLS = ["Wallet", "ATM", "Platform", "Investment", "Saving"];
-
-// Map kolom bucket → asset_category di v2.
-const BUCKET_CATEGORY: Record<string, "liquid" | "investment"> = {
-  Wallet: "liquid",
-  ATM: "liquid",
-  Platform: "liquid",
-  Investment: "investment",
-  Saving: "investment",
-};
 
 // Kategori yang TIDAK boleh dibuat — nama akun, sistem internal, typo.
 // Jika muncul di kolom Category sheet, skip (jangan masuk tabel categories).
@@ -246,6 +235,111 @@ function toSlug(name: string): string {
   return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+// ── Budget import (bf-noo) ────────────────────────────────────────────────────
+// Tab "📈  Budget": 1 row per category, cols "BUDGET <MON>". Only EARNING + SPENDING sections;
+// TRANSFER (saving/investing) targets are derived from goals (bf-yz4) → skipped.
+const BUDGET_SHEET = { id: "18iigYTz2ked8bobH1CWGY2sDC-efuNsHjBhEYzdGZqM", gid: "1236804720", year: 2026 };
+// ponytail: fixed threshold drops sheet noise (Other Earn 10 / 1,100); lower it if real budgets go below.
+const MIN_BUDGET = 10_000;
+
+// Accounting format from the export: "(1,000,000)" → -1000000, "-" → 0.
+function parseAcct(raw: string): number {
+  const s = raw.trim().replace(/,/g, "");
+  if (!s || s === "-") return 0;
+  const n = parseFloat(s.replace(/[()]/g, ""));
+  if (isNaN(n)) return 0;
+  return s.startsWith("(") ? -n : n;
+}
+
+async function importBudgets(userId: string, dry: boolean) {
+  // export (not gviz): gviz guesses header rows for this tab and drops the "BUDGET <MON>" labels.
+  const url = `https://docs.google.com/spreadsheets/d/${BUDGET_SHEET.id}/export?format=csv&gid=${BUDGET_SHEET.gid}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Fetch budget tab failed: HTTP ${res.status}`);
+  const [header, ...rows] = parseCSV(await res.text());
+
+  const monthCols = header.flatMap((h, col) => {
+    const m = h.match(/^BUDGET\s+([A-Z]{3})$/i);
+    const idx = m ? MONTHS.findIndex((mo) => mo.toLowerCase() === m[1].toLowerCase()) : -1;
+    return idx >= 0 ? [{ month: idx + 1, col }] : [];
+  });
+  if (monthCols.length === 0) throw new Error("No 'BUDGET <MON>' columns found — sheet layout changed?");
+
+  const cats = await db
+    .select({ id: categories.id, name: categories.name, group_name: categories.group_name })
+    .from(categories)
+    .where(and(eq(categories.user_id, userId), eq(categories.is_active, true)));
+  // Same name can live in both sections (BUSINESS) → match within the section's groups only.
+  const earnMap = new Map(cats.filter((c) => c.group_name === "earning").map((c) => [c.name.toLowerCase().trim(), c.id]));
+  const spendMap = new Map(
+    cats
+      .filter((c) => !["earning", "saving", "investing"].includes(c.group_name))
+      .map((c) => [c.name.toLowerCase().trim(), c.id])
+  );
+
+  const existing = await db
+    .select({ month: budgets.budget_month, category_id: budgets.category_id, amount: budgets.budgeted_amount })
+    .from(budgets)
+    .where(and(eq(budgets.user_id, userId), eq(budgets.budget_year, BUDGET_SHEET.year)));
+  const existingMap = new Map(existing.map((b) => [`${b.month}|${b.category_id}`, Number(b.amount)]));
+
+  const plan: { month: number; category_id: string; name: string; amount: number }[] = [];
+  const unmatched = new Map<string, number>();
+  const conflicts: string[] = [];
+  let section = "";
+
+  for (const r of rows) {
+    const name = (r[1] ?? "").trim();
+    if (["EARNING", "SPENDING", "TRANSFER", "SUMMARY"].includes(name)) {
+      section = name;
+      continue;
+    }
+    if (section !== "EARNING" && section !== "SPENDING") continue;
+    if (!name || name.includes(":") || name.toUpperCase().startsWith("TOTAL")) continue;
+
+    const catId = (section === "EARNING" ? earnMap : spendMap).get(name.toLowerCase());
+    for (const { month, col } of monthCols) {
+      const amount = Math.abs(parseAcct(r[col] ?? ""));
+      if (amount < MIN_BUDGET) continue;
+      if (!catId) {
+        const k = `${section} ${name}`;
+        unmatched.set(k, (unmatched.get(k) ?? 0) + 1);
+        continue;
+      }
+      const prev = existingMap.get(`${month}|${catId}`);
+      if (prev !== undefined) {
+        if (Math.abs(prev - amount) > 0.01) conflicts.push(`${MONTHS[month - 1]} ${name}: db=${prev} sheet=${amount}`);
+        continue;
+      }
+      plan.push({ month, category_id: catId, name, amount });
+    }
+  }
+
+  console.log(`\n💰 Budget import year=${BUDGET_SHEET.year} dry=${dry}`);
+  for (let m = 1; m <= 12; m++) {
+    const rowsM = plan.filter((p) => p.month === m);
+    if (rowsM.length) console.log(`  ${MONTHS[m - 1]}: ${rowsM.length} rows, Σ ${rowsM.reduce((s, p) => s + p.amount, 0)}`);
+  }
+  console.log(`  Total to insert: ${plan.length}`);
+  for (const [k, n] of unmatched) console.log(`  ⚠️  no category: ${k} (${n} months)`);
+  for (const c of conflicts) console.log(`  ⚠️  kept existing: ${c}`);
+
+  if (dry || plan.length === 0) return;
+  await db
+    .insert(budgets)
+    .values(
+      plan.map((p) => ({
+        user_id: userId,
+        budget_year: BUDGET_SHEET.year,
+        budget_month: p.month,
+        category_id: p.category_id,
+        budgeted_amount: p.amount.toFixed(2),
+      }))
+    )
+    .onConflictDoNothing();
+  console.log(`  ✅ Inserted ${plan.length} budget rows`);
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -262,6 +356,15 @@ async function main() {
   if (!userId) {
     console.error("Missing env: MIGRATE_USER_ID (UUID of the user to import into)");
     process.exit(1);
+  }
+
+  if (args.includes("--budgets")) {
+    if (Number(year) !== BUDGET_SHEET.year) {
+      console.error(`--budgets only supports ${BUDGET_SHEET.year} (sheet has no other year)`);
+      process.exit(1);
+    }
+    await importBudgets(userId, dry);
+    return;
   }
 
   let sheetId = SHEET_IDS[year];

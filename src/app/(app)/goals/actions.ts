@@ -8,10 +8,12 @@ import {
   updateGoal,
   softDeleteGoal,
   getGoalLedger,
+  getGoalFlowsByAccount,
   type GoalLedgerRow,
   type GoalRow,
 } from "@/db/queries/goals";
 import { createGoalSchema, updateGoalSchema, type CreateGoalInput, type UpdateGoalInput } from "@/lib/schemas/goal";
+import { buildGoalRealityCheck, type GoalRealityRow } from "@/lib/goalReality";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 
@@ -20,6 +22,16 @@ export async function getGoalsAction(): Promise<ServerActionResult<GoalRow[]>> {
     const user = await requireUser();
     const data = await getGoals(user.id);
     return { success: true, data };
+  } catch (error) {
+    return { success: false, message: handleApiError(error, "loading data").message };
+  }
+}
+
+export async function getGoalRealityCheckAction(): Promise<ServerActionResult<GoalRealityRow[]>> {
+  try {
+    const user = await requireUser();
+    const flows = await getGoalFlowsByAccount(user.id);
+    return { success: true, data: buildGoalRealityCheck(flows) };
   } catch (error) {
     return { success: false, message: handleApiError(error, "loading data").message };
   }

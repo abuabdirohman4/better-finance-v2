@@ -7,6 +7,7 @@ import {
   createGoalAction,
   updateGoalAction,
   deleteGoalAction,
+  getGoalRealityCheckAction,
 } from "../actions";
 import { getAccounts } from "@/app/(app)/accounts/actions";
 import type { CreateGoalInput, UpdateGoalInput } from "@/lib/schemas/goal";
@@ -27,6 +28,15 @@ export function useGoals() {
     queryKey: accountKeys.list(),
     queryFn: async () => {
       const res = await getAccounts();
+      if (!res.success) throw new Error(res.message);
+      return res.data!;
+    },
+  });
+
+  const realityQuery = useQuery({
+    queryKey: goalKeys.reality(),
+    queryFn: async () => {
+      const res = await getGoalRealityCheckAction();
       if (!res.success) throw new Error(res.message);
       return res.data!;
     },
@@ -68,6 +78,7 @@ export function useGoals() {
   return {
     query,
     accountsQuery,
+    realityQuery,
     createMutation,
     updateMutation,
     deleteMutation,

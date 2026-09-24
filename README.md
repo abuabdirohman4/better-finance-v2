@@ -4,6 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 - Accounts, transactions (spending / earning / transfer) with atomic balance updates
 - Monthly + weekly budgets, goals with a transaction-derived ledger
+- Goal reality check: warns when an account no longer holds the goal money tagged into it
 - Goal-funded spending: tag a spending to a goal — it reduces the goal and stays out of your monthly budget.
 - Saving budget per goal: monthly target comes from each goal's monthly contribution.
 - Net Worth with investment sub-products and manual market value (P&L)

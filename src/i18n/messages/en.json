@@ -173,7 +173,10 @@
     "deadline_prefix": "Deadline",
     "showHistory": "Show history",
     "hideHistory": "Hide history",
-    "overspent": "Used {amount} more than collected"
+    "overspent": "Used {amount} more than collected",
+    "realityTitle": "Goal money check",
+    "realityHint": "Goal transfers put more into these accounts than they hold now. A transaction may be missing, or goal money was moved out without a goal tag.",
+    "realityDetail": "Goals: {allocated} · Balance: {balance}"
   },
   "budgets": {
     "genericError": "Something went wrong.",

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, TriangleAlert } from "lucide-react";
 import { useGoals } from "./_hooks/useGoals";
 import { GoalCategoryCard } from "./_components/GoalCategoryCard";
 import { GoalBottomSheet } from "./_components/GoalBottomSheet";
@@ -20,8 +20,9 @@ export default function GoalsPage() {
   const t = useTranslations("goals");
   const tc = useTranslations("common");
 
-  const { query, createMutation, updateMutation, deleteMutation } = useGoals();
+  const { query, realityQuery, createMutation, updateMutation, deleteMutation } = useGoals();
   const goals = query.data ?? [];
+  const shortAccounts = realityQuery.data ?? [];
 
   const savingGoals = goals.filter((g) => g.goal_type === "Saving");
   const investingGoals = goals.filter((g) => g.goal_type === "Investment");
@@ -109,6 +110,36 @@ export default function GoalsPage() {
             </span>
           </div>
         </div>
+
+        {shortAccounts.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+            <div className="flex items-start gap-2 mb-3">
+              <TriangleAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <h2 className="font-bold text-amber-900">{t("realityTitle")}</h2>
+                <p className="text-xs text-amber-800">{t("realityHint")}</p>
+              </div>
+            </div>
+            <ul className="space-y-2">
+              {shortAccounts.map((r) => (
+                <li key={r.account_id} className="bg-white rounded-xl px-3 py-2 text-sm">
+                  <div className="flex justify-between gap-2 font-medium text-gray-900">
+                    <span className="truncate">{r.account_name}</span>
+                    <span className="text-red-600 shrink-0">
+                      {hideBalances ? MASK : `-${formatCurrency(r.shortfall)}`}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {t("realityDetail", {
+                      allocated: hideBalances ? MASK : formatCurrency(r.allocated),
+                      balance: hideBalances ? MASK : formatCurrency(r.balance),
+                    })}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {query.isLoading && (
           <div className="space-y-4">

@@ -1,6 +1,7 @@
 import { and, eq, desc, sql, inArray, isNull, isNotNull } from "drizzle-orm";
 import { db } from "@/db";
-import { savingsGoals, transactions, categories } from "@/db/schema";
+import { savingsGoals, transactions, categories, accounts } from "@/db/schema";
+import type { GoalAccountFlow } from "@/lib/goalReality";
 
 export interface GoalRow {
   id: string;
@@ -300,4 +301,43 @@ export async function getLiquidGoalAllocated(userId: string, liquidAccountIds: s
       ),
     );
   return Number(row?.total ?? 0);
+}
+
+// Signed goal money per account (bf-kvk): + goal transfers landing in the account, − goal spending paid from it.
+export async function getGoalFlowsByAccount(userId: string): Promise<GoalAccountFlow[]> {
+  const common = and(
+    eq(transactions.user_id, userId),
+    isNull(transactions.deleted_at),
+    isNotNull(transactions.goal_id),
+  );
+  const activeGoal = and(eq(savingsGoals.id, transactions.goal_id), eq(savingsGoals.is_active, true));
+
+  const [inflows, outflows] = await Promise.all([
+    db
+      .select({
+        account_id: accounts.id,
+        account_name: accounts.name,
+        current_balance: sql<number>`${accounts.current_balance}::numeric`,
+        amount: sql<number>`SUM(${transactions.amount}::numeric)`,
+      })
+      .from(transactions)
+      .innerJoin(savingsGoals, activeGoal)
+      .innerJoin(accounts, and(eq(accounts.id, transactions.to_account_id), eq(accounts.user_id, userId)))
+      .where(and(common, eq(transactions.transaction_type, "transfer")))
+      .groupBy(accounts.id, accounts.name, accounts.current_balance),
+    db
+      .select({
+        account_id: accounts.id,
+        account_name: accounts.name,
+        current_balance: sql<number>`${accounts.current_balance}::numeric`,
+        amount: sql<number>`-SUM(${transactions.amount}::numeric)`,
+      })
+      .from(transactions)
+      .innerJoin(savingsGoals, activeGoal)
+      .innerJoin(accounts, and(eq(accounts.id, transactions.account_id), eq(accounts.user_id, userId)))
+      .where(and(common, eq(transactions.transaction_type, "spending")))
+      .groupBy(accounts.id, accounts.name, accounts.current_balance),
+  ]);
+
+  return [...inflows, ...outflows];
 }

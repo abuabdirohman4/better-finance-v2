@@ -39,7 +39,7 @@
 |---|---|---|---|
 | C1 | `bf-atf` | brainstorm Claude → Antigravity | alur tarik/jual investasi: auto-split transfer (modal) + earning/spending (untung/rugi). Depends 3ai |
 | C2 | `bf-udk` | Claude interaktif | cutover checklist: migrate final → reconcile semua akun → opening statis → freeze sheet. Depends z65, dac |
-| C3 | `bf-kvk` | Antigravity | goal reality check. Depends 6rl |
+| C3 | `bf-kvk` | ✅ 2026-09-24 | goal reality check — warning card on /goals when an account holds less than the goal money tagged into it |
 | C4 | `bf-7h2` | Claude plan → Antigravity | auto price feed opt-in (quantity + price_symbol → refresh). Cuma ~6/24 produk punya harga publik; manual (3ai) tetap fallback. Setelah cutover |
 
 ### Fase D — Historis + insight · Claude interaktif

@@ -161,6 +161,11 @@ Enum: `"liquid" | "investment"` (lihat `src/lib/constants.ts`; DB CHECK constrai
 
 **Aturan tanda goal (bf-btz):** tipe transaksi menentukan arah, bukan akun. `transfer`+goal = setoran, `spending`+goal = pemakaian, `earning`+goal = DITOLAK server (`goalAllowed` di `transactions/_lib/goalRule.ts`). Spending ber-goal **dikecualikan** dari expense budget, drill-down, dan weekly (`isNull(transactions.goal_id)` di `getBudgetsWithSpending` type spending, `getTransactionsForBudget`, `getTransactionsForWeeklyBudget`); ditampilkan terpisah sebagai "Funded from goals" (`getGoalFundedSpending`). Halaman Transactions tetap arus kas mentah.
 
+## Goal reality check (bf-kvk)
+
+Goals page warns when an account holds less than the goal money tagged into it. **Derived, no `savings_goals.account_id`** (bf-yts: 1 goal spans many accounts). Per account: `allocated = Σ goal transfers (to_account_id) − Σ goal spending (account_id)`, active goals only; warn when `allocated − current_balance > 0.01`. Surplus never warns (free cash is normal); compares `current_balance` (modal), not `current_value`. Pure logic `buildGoalRealityCheck` in `src/lib/goalReality.ts` (unit tested), query `getGoalFlowsByAccount`.
+Ceilings: goal base `collected_amount` (opening / sheet import) has no account → invisible to the check. Move-then-spend (untagged Bibit → Wallet, goal spending from Wallet) shows a shortfall on the source.
+
 ## Budget: 3 sisi (bf-yz4)
 
 | Sisi | Target | Actual |

@@ -50,6 +50,7 @@ export const goalKeys = {
   all: ["goals"] as const,
   list: () => [...goalKeys.all, "list"] as const,
   detail: (id: string) => [...goalKeys.all, "detail", id] as const,
+  reality: () => [...goalKeys.all, "reality"] as const,
 };
 
 export const debtKeys = {

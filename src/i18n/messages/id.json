@@ -173,7 +173,10 @@
     "deadline_prefix": "Tenggat",
     "showHistory": "Tampilkan riwayat",
     "hideHistory": "Sembunyikan riwayat",
-    "overspent": "Terpakai {amount} melebihi yang terkumpul"
+    "overspent": "Terpakai {amount} melebihi yang terkumpul",
+    "realityTitle": "Cek uang goal",
+    "realityHint": "Transfer goal memasukkan lebih banyak ke akun ini daripada saldonya sekarang. Mungkin ada transaksi yang belum dicatat, atau uang goal dipindah tanpa tag goal.",
+    "realityDetail": "Goal: {allocated} · Saldo: {balance}"
   },
   "budgets": {
     "genericError": "Terjadi kesalahan.",

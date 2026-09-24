@@ -12,5 +12,7 @@ export function useDashboard() {
       if (!res.success) throw new Error(res.message ?? "Failed to load dashboard");
       return res.data!;
     },
+    // Keep last numbers in cache across navigation; default 5-min GC caused the Rp 0 flash (app-t56b9d6).
+    gcTime: Infinity,
   });
 }

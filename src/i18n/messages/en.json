@@ -190,7 +190,8 @@
   "dashboard": {
     "netWorth": "Net Worth",
     "topAccounts": "Top Used Accounts",
-    "recentTransactions": "Recent Transactions"
+    "recentTransactions": "Recent Transactions",
+    "loadFailed": "⚠️ Failed to load net worth."
   },
   "categories": {
     "title": "Manage Categories",

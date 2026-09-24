@@ -21,6 +21,8 @@ export default function DashboardPage() {
   const td = useTranslations("dashboard");
   const ta = useTranslations("accounts");
   const tt = useTranslations("transactions");
+  // Error only matters when there is no cached data to show — never render Rp 0 / empty for a failure.
+  const loadFailed = isError && !data;
 
   const displayName = data?.user.displayName ?? "";
   const topAccounts =
@@ -84,9 +86,11 @@ export default function DashboardPage() {
           </div>
           {isLoading ? (
             <div className="animate-pulse bg-gray-200 h-10 w-48 rounded" />
+          ) : loadFailed || !data ? (
+            <p className="text-sm text-red-600">{td("loadFailed")}</p>
           ) : (
             <p className="text-3xl font-bold text-gray-900">
-              {hideBalances ? MASK : formatCurrency(data?.totalAssets ?? 0)}
+              {hideBalances ? MASK : formatCurrency(data.totalAssets)}
             </p>
           )}
         </Link>
@@ -105,6 +109,8 @@ export default function DashboardPage() {
                 <div key={i} className="animate-pulse bg-white rounded-2xl h-32 shadow-lg" />
               ))}
             </div>
+          ) : loadFailed ? (
+            <EmptyCard text={ta("loadFailed")} />
           ) : topAccounts.length > 0 ? (
             <div className="grid grid-cols-3 gap-3">
               {topAccounts.map((a) => (
@@ -135,7 +141,7 @@ export default function DashboardPage() {
                 <div key={i} className="animate-pulse bg-gray-100 h-12 rounded-xl" />
               ))}
             </div>
-          ) : isError ? (
+          ) : loadFailed ? (
             <p className="text-sm text-red-600">{tt("loadFailed")}</p>
           ) : (data?.recentTransactions.length ?? 0) > 0 ? (
             <div className="space-y-3">

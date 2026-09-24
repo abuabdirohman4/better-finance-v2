@@ -190,7 +190,8 @@
   "dashboard": {
     "netWorth": "Kekayaan Bersih",
     "topAccounts": "Akun Sering Dipakai",
-    "recentTransactions": "Transaksi Terbaru"
+    "recentTransactions": "Transaksi Terbaru",
+    "loadFailed": "⚠️ Gagal memuat kekayaan bersih."
   },
   "categories": {
     "title": "Kelola Kategori",

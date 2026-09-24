@@ -117,9 +117,9 @@ Hasil: user hampir tak pernah tag manual — app nebak dari Account+Category (ke
 
 - [x] `transactions` → `accounts.current_balance` via RPC (fondasi bucket)
 - [x] Budgets per category per bulan (sudah derived dari transactions)
-- [ ] `transactions.goal_id` kolom + FK
-- [ ] `goals.collected_amount` derived (SUM per goal_id) — ganti manual input
-- [ ] Assets = agregat `accounts.current_balance` per asset_category + net worth
+- [x] `transactions.goal_id` kolom + FK (migration `20260723_goal_id_and_goal_type.sql`)
+- [x] `goals.collected_amount` derived — base + Σ transfer − Σ spending ber-goal_id (bf-4ln, bf-btz)
+- [x] Assets = agregat `accounts.current_balance` per asset_category + net worth (`/net-worth`, `getAssets`)
 - [ ] UI auto-suggest goal saat input transaksi
 - [ ] UI "Tambah kontribusi" dari halaman goal
 

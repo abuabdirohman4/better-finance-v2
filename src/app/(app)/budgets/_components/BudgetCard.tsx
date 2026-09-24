@@ -10,7 +10,7 @@ interface Props {
   isEarning?: boolean;
 }
 
-function getBudgetColors(percent: number, isEarning?: boolean) {
+export function getBudgetColors(percent: number, isEarning?: boolean) {
   if (isEarning) {
     if (percent >= 100) return { bar: "bg-green-500", text: "text-green-600", badge: "bg-green-100 text-green-700" };
     if (percent >= 80) return { bar: "bg-green-400", text: "text-green-500", badge: "bg-green-100 text-green-700" };

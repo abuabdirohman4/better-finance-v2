@@ -161,6 +161,16 @@ Enum: `"liquid" | "investment"` (lihat `src/lib/constants.ts`; DB CHECK constrai
 
 **Aturan tanda goal (bf-btz):** tipe transaksi menentukan arah, bukan akun. `transfer`+goal = setoran, `spending`+goal = pemakaian, `earning`+goal = DITOLAK server (`goalAllowed` di `transactions/_lib/goalRule.ts`). Spending ber-goal **dikecualikan** dari expense budget, drill-down, dan weekly (`isNull(transactions.goal_id)` di `getBudgetsWithSpending` type spending, `getTransactionsForBudget`, `getTransactionsForWeeklyBudget`); ditampilkan terpisah sebagai "Funded from goals" (`getGoalFundedSpending`). Halaman Transactions tetap arus kas mentah.
 
+## Budget: 3 sisi (bf-yz4)
+
+| Sisi | Target | Actual |
+|---|---|---|
+| Expense | `budgets` rows, group ∉ earning/saving/investing | spending `goal_id IS NULL` |
+| Income | `budgets` rows, group = earning | earning |
+| Saving/Investing | `savings_goals.monthly_contribution` per goal | Σ transfer ber-`goal_id` bulan itu (`getSavingBudgets`) |
+
+Bucket Saving/Investing = Σ per `goal_type` (`buildSavingBuckets`, `budgets/_lib/savingBuckets.ts`) — derived, tidak disimpan. `budgets` rows di kategori group saving/investing TIDAK dipakai lagi (disaring dari `getBudgetsWithSpending` + picker `BudgetBottomSheet`; data lama dibiarkan). Jangan hidupkan lagi `getTransferBudgets`/`goalMap` (dihapus — dua implementasi angka yang sama). Drill goal di `/budgets` = `GoalLedger` dengan `year`/`month`.
+
 ## Wishlist Affordability (bf-ez2)
 
 "Bisa beli" ≠ punya uang. Patokan = **uang bebas** = liquid − `allocated`, dengan `allocated` = Σ transfer ber-`goal_id` yang masuk akun liquid (`getLiquidGoalAllocated`). `goal_type` hanya `Saving | Investment` (CHECK constraint) — tidak ada tipe "emergency"; dana darurat = goal biasa bertipe `Saving`, jadi ikut terhitung lewat transfernya. 3 tingkat: 🟢 freeCash≥harga · ⚠️ liquid cukup tapi kuras alokasi · 🔴 liquid kurang. Lihat `getAffordabilityAction` di `wishlist/actions.ts`.

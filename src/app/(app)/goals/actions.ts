@@ -80,13 +80,18 @@ export async function deleteGoalAction(
 }
 
 export async function getGoalLedgerAction(
-  goalId: string
+  goalId: string,
+  year?: number,
+  month?: number
 ): Promise<ServerActionResult<GoalLedgerRow[]>> {
   try {
     const user = await requireUser();
     const parsed = z.string().uuid().safeParse(goalId);
     if (!parsed.success) return { success: false, message: (await getTranslations("goals"))("invalidId") };
-    const data = await getGoalLedger(user.id, goalId);
+    const period = z
+      .object({ year: z.number().int().min(2000).max(2100), month: z.number().int().min(1).max(12) })
+      .safeParse({ year, month });
+    const data = await getGoalLedger(user.id, goalId, period.success ? period.data : undefined);
     return { success: true, data };
   } catch (error) {
     return { success: false, message: handleApiError(error, "loading data").message };

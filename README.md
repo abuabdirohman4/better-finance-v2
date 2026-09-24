@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Features
+
+- Goal-funded spending: tag a spending to a goal — it reduces the goal and stays out of your monthly budget.
+- Saving budget per goal: monthly target comes from each goal's monthly contribution.
+
 ## Getting Started
 
 First, run the development server:

@@ -143,6 +143,7 @@ export function BudgetBottomSheet({
   const groupOrder = Object.keys(CATEGORY_GROUP_LABELS);
   
   const categoryOptions = categories
+    .filter((c) => c.group_name !== "saving" && c.group_name !== "investing")
     .map((c) => ({
       value: c.id,
       label: c.name,

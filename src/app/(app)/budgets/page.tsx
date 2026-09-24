@@ -13,7 +13,7 @@ import { Fab } from "@/components/layouts/Fab";
 import { usePrivacyStore } from "@/stores/privacyStore";
 import { formatCurrency } from "@/lib/helper";
 import { useTranslations } from "next-intl";
-import type { BudgetWithSpending, TransferBudgetRow } from "@/db/queries/budgets";
+import type { BudgetWithSpending } from "@/db/queries/budgets";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -27,12 +27,12 @@ export default function BudgetsPage() {
   const [editBudget, setEditBudget] = useState<BudgetWithSpending | null>(null);
   const hideBalances = usePrivacyStore((s) => s.hideBalances);
 
-  const { query, incomeQuery, transferQuery, fundedQuery, categoriesQuery, upsertMutation, deleteMutation } = useBudgets(year, month);
+  const { query, incomeQuery, savingQuery, fundedQuery, categoriesQuery, upsertMutation, deleteMutation } = useBudgets(year, month);
   const fundedFromGoals = fundedQuery.data ?? 0;
 
   const budgets = query.data ?? [];
   const incomeBudgets = incomeQuery.data ?? [];
-  const transferBudgets = transferQuery.data ?? [];
+  const savingRows = savingQuery.data ?? [];
 
   // Group by group_name
   const groups = budgets.reduce<Record<string, BudgetWithSpending[]>>((acc, b) => {
@@ -42,32 +42,27 @@ export default function BudgetsPage() {
     return acc;
   }, {});
 
-  const expenseBudgets = budgets.filter((b) => b.group_name !== "earning");
-  const totalBudgeted = expenseBudgets.reduce((s, b) => s + Number(b.budgeted_amount), 0);
-  const totalSpent = expenseBudgets.reduce((s, b) => s + Number(b.actual_spending), 0);
+  const totalBudgeted = budgets.reduce((s, b) => s + Number(b.budgeted_amount), 0);
+  const totalSpent = budgets.reduce((s, b) => s + Number(b.actual_spending), 0);
   const overallPercent = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0;
   const overallRemaining = totalBudgeted - totalSpent;
 
   function openCreate() { setEditBudget(null); setSheetOpen(true); }
   function openEdit(b: BudgetWithSpending) { setEditBudget(b); setSheetOpen(true); }
 
-  const [drillBudget, setDrillBudget] = useState<BudgetWithSpending | TransferBudgetRow | null>(null);
+  const [drillBudget, setDrillBudget] = useState<BudgetWithSpending | null>(null);
   const [drillOpen, setDrillOpen] = useState(false);
 
-  function openDrill(b: BudgetWithSpending | TransferBudgetRow) {
+  function openDrill(b: BudgetWithSpending) {
     setDrillBudget(b);
     setDrillOpen(true);
   }
 
-  function openEditFromDrill(b: BudgetWithSpending | TransferBudgetRow) {
+  function openEditFromDrill(b: BudgetWithSpending) {
     setDrillOpen(false);
     setTimeout(() => {
-      // If it's a transfer budget row (has 'type' property), we don't support editing from the sheet directly right now,
-      // or we'd handle it differently. For now, only support edit if it's BudgetWithSpending.
-      if (!("type" in b)) {
-        setEditBudget(b);
-        setSheetOpen(true);
-      }
+      setEditBudget(b);
+      setSheetOpen(true);
     }, 320); // Wait for drill sheet to close
   }
 
@@ -207,6 +202,10 @@ export default function BudgetsPage() {
           </div>
         )}
 
+        {/* Saving / Investing — targets from goals' monthly_contribution (bf-yz4) */}
+        {!savingQuery.isLoading && (
+          <SavingBudgetSection rows={savingRows} year={year} month={month} hideBalances={hideBalances} />
+        )}
 
         {/* Budget Spending Title */}
         {!query.isLoading && (

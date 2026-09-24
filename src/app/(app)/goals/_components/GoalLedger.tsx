@@ -8,14 +8,16 @@ import { goalKeys } from "@/lib/query";
 interface Props {
   goalId: string;
   hideBalances: boolean;
+  year?: number;  // with month: only that month (budget page)
+  month?: number;
 }
 
-export function GoalLedger({ goalId, hideBalances }: Props) {
+export function GoalLedger({ goalId, hideBalances, year, month }: Props) {
   const t = useTranslations("common");
   const { data = [], isLoading } = useQuery({
-    queryKey: [...goalKeys.detail(goalId), "ledger"],
+    queryKey: [...goalKeys.detail(goalId), "ledger", year ?? null, month ?? null],
     queryFn: async () => {
-      const res = await getGoalLedgerAction(goalId);
+      const res = await getGoalLedgerAction(goalId, year, month);
       if (!res.success) throw new Error(res.message);
       return res.data!;
     },

@@ -8,13 +8,11 @@ import {
   deleteBudget,
   getTransactionsForWeeklyBudget,
   getTransactionsForBudget,
-  getTransactionsForTransfer,
-  getTransferBudgets,
   getGoalFundedSpending,
   type BudgetWithSpending,
   type BudgetTxRow,
-  type TransferBudgetRow,
 } from "@/db/queries/budgets";
+import { getSavingBudgets, type SavingBudgetRow } from "@/db/queries/goals";
 import { getCategories, type CategoryRow } from "@/db/queries/accounts";
 import { upsertBudgetSchema, type UpsertBudgetInput } from "@/lib/schemas/budget";
 import { z } from "zod";
@@ -54,13 +52,13 @@ export async function getIncomeBudgetsAction(
   }
 }
 
-export async function getTransferBudgetsAction(
+export async function getSavingBudgetsAction(
   year: number,
   month: number
-): Promise<ServerActionResult<TransferBudgetRow[]>> {
+): Promise<ServerActionResult<SavingBudgetRow[]>> {
   try {
     const user = await requireUser();
-    const data = await getTransferBudgets(user.id, year, month);
+    const data = await getSavingBudgets(user.id, year, month);
     return { success: true, data };
   } catch (error) {
     return { success: false, message: handleApiError(error, "loading data").message };
@@ -129,16 +127,10 @@ export async function getBudgetTransactionsAction(
   categoryId: string,
   year: number,
   month: number,
-  type: "spending" | "earning" | "saving" | "investing" = "spending"
+  type: "spending" | "earning" = "spending"
 ): Promise<ServerActionResult<BudgetTxRow[]>> {
   try {
     const user = await requireUser();
-    
-    if (type === "saving" || type === "investing") {
-      const data = await getTransactionsForTransfer(user.id, type, year, month);
-      return { success: true, data };
-    }
-
     const parsed = z.string().uuid().safeParse(categoryId);
     if (!parsed.success) return { success: false, message: "Invalid category." };
     const data = await getTransactionsForBudget(user.id, categoryId, year, month, type);

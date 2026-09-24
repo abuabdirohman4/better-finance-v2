@@ -90,8 +90,14 @@ export interface GoalLedgerRow {
 
 export async function getGoalLedger(
   userId: string,
-  goalId: string
+  goalId: string,
+  period?: { year: number; month: number }
 ): Promise<GoalLedgerRow[]> {
+  const startDate = period ? `${period.year}-${String(period.month).padStart(2, "0")}-01` : null;
+  const endDate = period
+    ? `${period.year}-${String(period.month).padStart(2, "0")}-${new Date(period.year, period.month, 0).getDate()}`
+    : null;
+
   const rows = await db
     .select({
       id: transactions.id,
@@ -109,6 +115,8 @@ export async function getGoalLedger(
         eq(transactions.goal_id, goalId),
         isNull(transactions.deleted_at),
         sql`${transactions.transaction_type} IN ('transfer', 'spending')`,
+        startDate ? sql`${transactions.transaction_date} >= ${startDate}` : undefined,
+        endDate ? sql`${transactions.transaction_date} <= ${endDate}` : undefined,
       ),
     )
     .orderBy(desc(transactions.transaction_date), desc(transactions.created_at));
@@ -149,7 +157,6 @@ export async function getSavingBudgets(
       and(
         eq(savingsGoals.user_id, userId),
         eq(savingsGoals.is_active, true),
-        sql`${savingsGoals.monthly_contribution} > 0`,
       )
     )
     .orderBy(savingsGoals.goal_type, savingsGoals.name);
@@ -182,7 +189,7 @@ export async function getSavingBudgets(
 
   return goals.map(g => {
     const actual = transferMap.get(g.id) ?? 0;
-    const target = Number(g.monthly_contribution);
+    const target = Number(g.monthly_contribution ?? 0);
     return {
       goal_id: g.id,
       goal_name: g.name,

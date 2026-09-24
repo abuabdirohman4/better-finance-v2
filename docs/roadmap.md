@@ -106,7 +106,9 @@ Riwayat current_value (reuse `account_balance_snapshots` kalau perlu grafik) · 
 - [x] `bf-4z1` — Income budget: section Budget Earning di halaman budget
 - [x] `bf-btz` — Goal usage ledger: spending ber-goal_id kurangi collected, GoalLedger component
 - [x] `bf-z8z` — Budget drill-down: tap kategori → list transaksi
-- [x] `bf-i6e` — Budget Transfers: 2 aggregate bucket Saving/Investing
+- [x] `bf-i6e` — Budget Transfers: 2 aggregate bucket Saving/Investing — **digantikan bf-yz4 (2026-09-24): target per goal dari monthly_contribution**
+- [x] `bf-yz4` — Saving budget per goal (target = monthly_contribution, bucket Saving/Investing derived)
+- [x] `bf-btz` — Goal-funded spending tersimpan + dikecualikan dari expense budget ("Funded from goals")
 
 ---
 
@@ -156,7 +158,7 @@ Legenda: ✅ done · 🔄 sebagian · ⏳ belum
 | Budgets — monthly | ✅ | `/budgets` | CRUD + progress bar |
 | Budgets — weekly cascade | ✅ | `/budgets/weekly` | Cascade algorithm (bf-9qc) |
 | Budgets — kategori management | ✅ | `/budgets/categories` | Add/edit/soft-delete, custom group (bf-wrp) |
-| Budgets — drill-down + transfers | ✅ | `/budgets` | Tap kategori → transaksi; Saving/Investing aggregate (bf-z8z, bf-i6e) |
+| Budgets — drill-down + transfers | ✅ | `/budgets` | Tap kategori → transaksi; Saving/Investing per goal (bf-z8z, bf-yz4) |
 | Goals — CRUD + integrasi | ✅ | `/goals` | goal_id di transaksi, collected derived (bf-4ln) |
 | Goals — usage ledger | ✅ | `/goals` | Spending ber-goal_id, GoalLedger component (bf-btz) |
 | Net Worth | ✅ | `/net-worth` | Kartu Accounts agregat + non-liquid + Liabilities section (bf-9v5, bf-3e0) |
@@ -202,6 +204,7 @@ Target: akun, transaksi, budget bulanan+mingguan, goals, aset. AI insights & sub
 
 ## 📜 Changelog
 
+- **2026-09-24** — **bf-yz4 closed.** Saving/Investing budget diganti target per goal: `savings_goals.monthly_contribution` (bukan `budgets` rows saving/investing yang dihapus dari expense). Bucket Saving/Investing = Σ per `goal_type` (`buildSavingBuckets`), drill goal = `GoalLedger` bulan berjalan. Menggantikan bf-i6e (aggregate bucket). `getTransferBudgets`/`goalMap` dihapus.
 - **2026-08-19** — **bf-3ai closed** (input manual current_value di `/assets/[group]`, P&L per produk + grup, kartu grup tampil P&L; Net Worth tetap modal). **bf-aq8 closed** (ter-cover). Issue baru bf-7h2 auto price feed (Fase C4).
 - **2026-08-19** — **Peta roadmap A–E.** Sesi planning Fable: 20 issue dipetakan 5 fase (A investasi → B input harian → C cutover → D historis → E publik). Keputusan: target ganti spreadsheet secepatnya; landing setelah onboarding; Antigravity paralel utk plan siap. 4 issue baru: bf-atf (tarik/jual investasi), bf-udk (cutover checklist), bf-8ph (onboarding user baru), bf-xd4 (README). Deps ditambah (z65←dac, udk←z65+dac, kvk←6rl, 3mb←8ph, aq8←3ai, gv5←4m1). bf-z6w closed.
 - **2026-08-19** — **bf-v4r closed.** Dropdown akun: grup collapsible (default terlipat, opsi tanpa grup selalu di atas & tak dilipat). Search tembus grup terlipat + cocokkan nama grup. Issue baru: bf-m2s (alur tambah produk investasi — daftar sub-produk sekarang cuma ada karena import, user baru kosong).

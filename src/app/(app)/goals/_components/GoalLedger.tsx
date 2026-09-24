@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatCurrency } from "@/lib/helper";
 import { getGoalLedgerAction } from "../actions";
 import { useTranslations } from "next-intl";
+import { goalKeys } from "@/lib/query";
 
 interface Props {
   goalId: string;
@@ -12,7 +13,7 @@ interface Props {
 export function GoalLedger({ goalId, hideBalances }: Props) {
   const t = useTranslations("common");
   const { data = [], isLoading } = useQuery({
-    queryKey: ["goal-ledger", goalId],
+    queryKey: [...goalKeys.detail(goalId), "ledger"],
     queryFn: async () => {
       const res = await getGoalLedgerAction(goalId);
       if (!res.success) throw new Error(res.message);

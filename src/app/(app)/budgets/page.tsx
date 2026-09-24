@@ -27,7 +27,8 @@ export default function BudgetsPage() {
   const [editBudget, setEditBudget] = useState<BudgetWithSpending | null>(null);
   const hideBalances = usePrivacyStore((s) => s.hideBalances);
 
-  const { query, incomeQuery, transferQuery, categoriesQuery, upsertMutation, deleteMutation } = useBudgets(year, month);
+  const { query, incomeQuery, transferQuery, fundedQuery, categoriesQuery, upsertMutation, deleteMutation } = useBudgets(year, month);
+  const fundedFromGoals = fundedQuery.data ?? 0;
 
   const budgets = query.data ?? [];
   const incomeBudgets = incomeQuery.data ?? [];
@@ -169,6 +170,14 @@ export default function BudgetsPage() {
             </div>
             <span className="text-xs font-semibold text-green-600">{overallPercent.toFixed(0)}%</span>
           </div>
+          {fundedFromGoals > 0 && (
+            <p className="text-xs text-gray-500 mt-3">
+              {t("fundedFromGoals")}:{" "}
+              <span className="font-semibold text-gray-700">
+                {hideBalances ? MASK : formatCurrency(fundedFromGoals, "short")}
+              </span>
+            </p>
+          )}
         </div>
 
 

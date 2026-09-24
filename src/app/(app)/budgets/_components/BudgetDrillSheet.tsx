@@ -5,6 +5,7 @@ import { X, Pencil } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getBudgetTransactionsAction } from "../actions";
 import { formatCurrency } from "@/lib/helper";
+import { budgetKeys } from "@/lib/query";
 import type { BudgetWithSpending, TransferBudgetRow } from "@/db/queries/budgets";
 
 interface Props {
@@ -48,7 +49,7 @@ export function BudgetDrillSheet({ open, onClose, budget, year, month, onEdit, h
   const actualSpending = isTransfer ? budget.actual_amount : budget?.actual_spending;
   
   const txQuery = useQuery({
-    queryKey: ["budget-drill", budget?.category_id, year, month, isTransfer ? (budget as TransferBudgetRow).type : "budget"],
+    queryKey: [...budgetKeys.all, "drill", budget?.category_id, year, month, isTransfer ? (budget as TransferBudgetRow).type : "budget"],
     queryFn: async () => {
       if (!budget) return [];
       let type: "spending" | "earning" | "saving" | "investing" = "spending";

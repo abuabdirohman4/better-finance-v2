@@ -78,6 +78,8 @@ export async function getBudgetsWithSpending(
       and(
         eq(transactions.user_id, userId),
         eq(transactions.transaction_type, type),
+        // Goal-funded spending is paid from goal money, not the monthly budget (P1).
+        type === "spending" ? isNull(transactions.goal_id) : undefined,
         sql`${transactions.transaction_date} >= ${startDate}`,
         sql`${transactions.transaction_date} <= ${endDate}`,
         sql`${transactions.deleted_at} is null`,
@@ -185,12 +187,38 @@ export async function getTransactionsForWeeklyBudget(
       and(
         eq(transactions.user_id, userId),
         eq(transactions.transaction_type, "spending"),
+        isNull(transactions.goal_id),
         sql`${transactions.transaction_date} >= ${startDate}`,
         sql`${transactions.transaction_date} <= ${endDate}`,
         sql`${transactions.deleted_at} is null`
       )
     );
   return rows;
+}
+
+/** Σ goal-funded spending in a month — shown as "Funded from goals" on /budgets (P8). */
+export async function getGoalFundedSpending(
+  userId: string,
+  year: number,
+  month: number
+): Promise<number> {
+  const startDate = `${year}-${String(month).padStart(2, "0")}-01`;
+  const endDate = `${year}-${String(month).padStart(2, "0")}-${new Date(year, month, 0).getDate()}`;
+
+  const [row] = await db
+    .select({ total: sql<number>`COALESCE(SUM(${transactions.amount}::numeric), 0)` })
+    .from(transactions)
+    .where(
+      and(
+        eq(transactions.user_id, userId),
+        eq(transactions.transaction_type, "spending"),
+        isNotNull(transactions.goal_id),
+        isNull(transactions.deleted_at),
+        sql`${transactions.transaction_date} >= ${startDate}`,
+        sql`${transactions.transaction_date} <= ${endDate}`,
+      )
+    );
+  return Number(row?.total ?? 0);
 }
 
 export interface BudgetTxRow {
@@ -226,6 +254,7 @@ export async function getTransactionsForBudget(
         eq(transactions.user_id, userId),
         eq(transactions.category_id, categoryId),
         eq(transactions.transaction_type, type),
+        type === "spending" ? isNull(transactions.goal_id) : undefined,
         isNull(transactions.deleted_at),
         sql`${transactions.transaction_date} >= ${startDate}`,
         sql`${transactions.transaction_date} <= ${endDate}`,

@@ -6,6 +6,7 @@ import {
   getBudgetsAction,
   getIncomeBudgetsAction,
   getTransferBudgetsAction,
+  getGoalFundedSpendingAction,
   upsertBudgetAction,
   deleteBudgetAction,
   getCategoriesForBudgetAction,
@@ -45,6 +46,16 @@ export function useBudgets(year: number, month: number) {
     staleTime: 30_000,
   });
 
+  const fundedQuery = useQuery({
+    queryKey: budgetKeys.goalFunded(year, month),
+    queryFn: async () => {
+      const res = await getGoalFundedSpendingAction(year, month);
+      if (!res.success) throw new Error(res.message);
+      return res.data!;
+    },
+    staleTime: 30_000,
+  });
+
   const categoriesQuery = useQuery({
     queryKey: ["budget-categories"],
     queryFn: async () => {
@@ -72,6 +83,7 @@ export function useBudgets(year: number, month: number) {
     query,
     incomeQuery,
     transferQuery,
+    fundedQuery,
     categoriesQuery,
     upsertMutation,
     deleteMutation,

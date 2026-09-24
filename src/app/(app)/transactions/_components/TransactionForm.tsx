@@ -11,6 +11,7 @@ import { productLabel } from "@/lib/investment";
 import { transactionKeys } from "@/lib/query";
 import { useTranslations } from "next-intl";
 import { getGoalsForTransferAction } from "../actions";
+import { goalAllowed } from "../_lib/goalRule";
 import type { AccountRow, CategoryRow } from "@/db/queries/accounts";
 import type { CreateTransactionInput, UpdateTransactionInput } from "@/lib/schemas/transaction";
 
@@ -127,7 +128,7 @@ export function TransactionForm({
       transaction_type: txType,
       account_id: accountId,
       to_account_id: txType === "transfer" ? toAccountId || null : null,
-      goal_id: txType === "transfer" ? goalId || null : null,
+      goal_id: goalAllowed(txType) ? goalId || null : null,
       category_id: txType !== "transfer" ? categoryId || null : null,
       amount,
       note: note.trim(),
@@ -146,6 +147,7 @@ export function TransactionForm({
             onClick={() => {
               setTxType(t);
               setCategoryId("");
+              setGoalId("");
             }}
             className={cn(
               "flex-1 py-2 rounded-xl text-sm font-semibold transition-colors",

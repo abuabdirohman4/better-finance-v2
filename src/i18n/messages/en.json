@@ -114,6 +114,7 @@
     "destinationNotFound": "Destination account not found.",
     "sameAccount": "Source and destination accounts must be different.",
     "goalNotFound": "Goal not found or does not belong to you.",
+    "goalNotAllowed": "Goals can only be linked to spending or transfers.",
     "notFound": "Transaction not found.",
     "invalidId": "Invalid transaction ID.",
     "addTransaction": "Add transaction",
@@ -162,7 +163,10 @@
     "targetShort": "Target",
     "saving": "Saving",
     "investment": "Investment",
-    "deadline_prefix": "Deadline"
+    "deadline_prefix": "Deadline",
+    "showHistory": "Show history",
+    "hideHistory": "Hide history",
+    "overspent": "Used {amount} more than collected"
   },
   "budgets": {
     "genericError": "Something went wrong.",
@@ -172,6 +176,7 @@
     "budget": "Budget",
     "spending": "Spending",
     "remaining": "Remaining",
+    "fundedFromGoals": "Funded from goals",
     "empty": "No budgets for this month.",
     "emptyHint": "Tap + to add category budgets.",
     "budgetEarning": "Budget Earning",

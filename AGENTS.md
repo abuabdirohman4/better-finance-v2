@@ -157,11 +157,13 @@ Enum: `"liquid" | "investment"` (lihat `src/lib/constants.ts`; DB CHECK constrai
 
 ## Goals: `collected_amount` derived (bf-4ln)
 
-`getGoals` (`src/db/queries/goals.ts`) hitung `collected_amount` = base kolom + Σ `transactions` bertipe `transfer` dengan `goal_id` match (deleted_at NULL). **Derived, bukan kolom mentah** — jangan baca `savings_goals.collected_amount` langsung untuk progress. `percent = collected/target*100`.
+`getGoals` (`src/db/queries/goals.ts`) hitung `collected_amount` = base kolom + Σ `transfer` ber-`goal_id` − Σ `spending` ber-`goal_id` (deleted_at NULL). Boleh negatif (P6: pemakaian > terkumpul diizinkan; `percent` di-clamp 0, GoalCard tampil merah). **Derived, bukan kolom mentah** — jangan baca `savings_goals.collected_amount` langsung untuk progress. `percent = collected/target*100`.
+
+**Aturan tanda goal (bf-btz):** tipe transaksi menentukan arah, bukan akun. `transfer`+goal = setoran, `spending`+goal = pemakaian, `earning`+goal = DITOLAK server (`goalAllowed` di `transactions/_lib/goalRule.ts`). Spending ber-goal **dikecualikan** dari expense budget, drill-down, dan weekly (`isNull(transactions.goal_id)` di `getBudgetsWithSpending` type spending, `getTransactionsForBudget`, `getTransactionsForWeeklyBudget`); ditampilkan terpisah sebagai "Funded from goals" (`getGoalFundedSpending`). Halaman Transactions tetap arus kas mentah.
 
 ## Wishlist Affordability (bf-ez2)
 
-"Bisa beli" ≠ punya uang. Patokan = **uang bebas** = liquid − Σ sisa target goal aktif (dana darurat = `goal_type "emergency"`, jadi ikut terhitung). 3 tingkat: 🟢 freeCash≥harga · ⚠️ liquid cukup tapi kuras alokasi · 🔴 liquid kurang. Lihat `getAffordabilityAction` di `wishlist/actions.ts`.
+"Bisa beli" ≠ punya uang. Patokan = **uang bebas** = liquid − `allocated`, dengan `allocated` = Σ transfer ber-`goal_id` yang masuk akun liquid (`getLiquidGoalAllocated`). `goal_type` hanya `Saving | Investment` (CHECK constraint) — tidak ada tipe "emergency"; dana darurat = goal biasa bertipe `Saving`, jadi ikut terhitung lewat transfernya. 3 tingkat: 🟢 freeCash≥harga · ⚠️ liquid cukup tapi kuras alokasi · 🔴 liquid kurang. Lihat `getAffordabilityAction` di `wishlist/actions.ts`.
 
 ## Feature Pages (`src/app/(app)/`)
 

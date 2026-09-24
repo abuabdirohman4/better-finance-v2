@@ -18,6 +18,7 @@ import { handleApiError, type ServerActionResult } from "@/lib/errorUtils";
 import { createTransactionSchema, updateTransactionSchema } from "@/lib/schemas/transaction";
 import { calcUpdateDeltas } from "./_lib/balanceDelta";
 import { getTranslations } from "next-intl/server";
+import { goalAllowed } from "./_lib/goalRule";
 
 export async function getTransactionsAction(
   filters: TransactionFilters = {}
@@ -75,6 +76,9 @@ export async function createTransactionAction(
       if (!destAccount) return { success: false, message: (await getTranslations("transactions"))("destinationNotFound") };
     }
 
+    if (validInput.goal_id && !goalAllowed(validInput.transaction_type)) {
+      return { success: false, message: (await getTranslations("transactions"))("goalNotAllowed") };
+    }
     if (validInput.goal_id) {
       const goals = await getGoalsForSelect(user.id);
       if (!goals.find((g) => g.id === validInput.goal_id)) {
@@ -136,6 +140,9 @@ export async function updateTransactionAction(
     }
 
     const newGoalId = "goal_id" in validInput ? validInput.goal_id : old.goal_id;
+    if (newGoalId && !goalAllowed(newType)) {
+      return { success: false, message: (await getTranslations("transactions"))("goalNotAllowed") };
+    }
     if (newGoalId && newGoalId !== old.goal_id) {
       const goals = await getGoalsForSelect(user.id);
       if (!goals.find((g) => g.id === newGoalId)) {

@@ -10,6 +10,7 @@ import {
   getTransactionsForBudget,
   getTransactionsForTransfer,
   getTransferBudgets,
+  getGoalFundedSpending,
   type BudgetWithSpending,
   type BudgetTxRow,
   type TransferBudgetRow,
@@ -60,6 +61,19 @@ export async function getTransferBudgetsAction(
   try {
     const user = await requireUser();
     const data = await getTransferBudgets(user.id, year, month);
+    return { success: true, data };
+  } catch (error) {
+    return { success: false, message: handleApiError(error, "loading data").message };
+  }
+}
+
+export async function getGoalFundedSpendingAction(
+  year: number,
+  month: number
+): Promise<ServerActionResult<number>> {
+  try {
+    const user = await requireUser();
+    const data = await getGoalFundedSpending(user.id, year, month);
     return { success: true, data };
   } catch (error) {
     return { success: false, message: handleApiError(error, "loading data").message };

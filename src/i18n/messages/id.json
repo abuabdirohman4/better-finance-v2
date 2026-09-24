@@ -114,6 +114,7 @@
     "destinationNotFound": "Akun tujuan tidak ditemukan.",
     "sameAccount": "Akun sumber dan tujuan tidak boleh sama.",
     "goalNotFound": "Goal tidak ditemukan atau bukan milik Anda.",
+    "goalNotAllowed": "Goal hanya bisa dikaitkan ke pengeluaran atau transfer.",
     "notFound": "Transaksi tidak ditemukan.",
     "invalidId": "ID transaksi tidak valid.",
     "addTransaction": "Tambah transaksi",
@@ -162,7 +163,10 @@
     "targetShort": "Target",
     "saving": "Tabungan",
     "investment": "Investasi",
-    "deadline_prefix": "Tenggat"
+    "deadline_prefix": "Tenggat",
+    "showHistory": "Tampilkan riwayat",
+    "hideHistory": "Sembunyikan riwayat",
+    "overspent": "Terpakai {amount} melebihi yang terkumpul"
   },
   "budgets": {
     "genericError": "Terjadi kesalahan.",
@@ -172,6 +176,7 @@
     "budget": "Budget",
     "spending": "Pengeluaran",
     "remaining": "Sisa",
+    "fundedFromGoals": "Dibiayai dari goal",
     "empty": "Belum ada budget bulan ini.",
     "emptyHint": "Tap + untuk tambah budget kategori.",
     "budgetEarning": "Budget Pemasukan",

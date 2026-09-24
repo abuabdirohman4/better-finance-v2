@@ -32,7 +32,7 @@ export function useWeeklyBudget(year: number, month: number) {
 
   // Transactions untuk bulan ini (untuk spending calculation)
   const txQuery = useQuery({
-    queryKey: ["weekly-transactions", year, month],
+    queryKey: [...budgetKeys.all, "weekly-tx", year, month],
     queryFn: async () => {
       const res = await getWeeklySpendingAction(year, month);
       if (!res.success) throw new Error(res.message);

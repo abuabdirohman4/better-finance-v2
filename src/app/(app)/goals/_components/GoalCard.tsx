@@ -51,7 +51,7 @@ export function GoalCard({ goal, onEdit, hideBalances }: Props) {
       <div className="flex justify-between items-end mb-2 mt-4">
         <div>
           <p className="text-xs text-gray-500 mb-0.5">{t("collected")}</p>
-          <p className="font-bold text-gray-900">
+          <p className={`font-bold ${goal.collected_amount < 0 ? "text-red-600" : "text-gray-900"}`}>
             {hideBalances ? MASK : formatCurrency(goal.collected_amount)}
           </p>
         </div>
@@ -70,6 +70,12 @@ export function GoalCard({ goal, onEdit, hideBalances }: Props) {
         />
       </div>
 
+      {goal.collected_amount < 0 && (
+        <p className="text-xs text-red-600 font-medium mb-2">
+          {t("overspent", { amount: hideBalances ? MASK : formatCurrency(-goal.collected_amount) })}
+        </p>
+      )}
+
       {goal.deadline_date && (
         <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1 mb-2">
           <CalendarIcon className="w-3.5 h-3.5" />
@@ -78,7 +84,7 @@ export function GoalCard({ goal, onEdit, hideBalances }: Props) {
       )}
 
       <button onClick={() => setExpanded(!expanded)} className="w-full text-xs text-gray-400 pt-2 pb-1 text-center hover:text-gray-600 transition-colors">
-        {expanded ? "Hide history ▲" : "Show history ▾"}
+        {expanded ? `${t("hideHistory")} ▲` : `${t("showHistory")} ▾`}
       </button>
       {expanded && <GoalLedger goalId={goal.id} hideBalances={hideBalances} />}
     </div>

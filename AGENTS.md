@@ -73,7 +73,7 @@ Body dimulai dengan `mt-6` (bukan `pt-2`) untuk spacing wave → content.
 ### Currency Formatting (`src/lib/helper.ts`)
 - `formatCurrency(amount)` → `Rp 1.000.000`
 - `formatCurrency(amount, "signs")` → `+Rp 1.000` / `-Rp 1.000`
-- `formatCurrency(amount, "superscript")` → HTML string dengan `<sup>` → pakai `dangerouslySetInnerHTML` (ATM accounts saja)
+- `formatCurrency(amount, "superscript")` → HTML string dengan `<sup>` → pakai `dangerouslySetInnerHTML` (Bank accounts saja)
 - `formatCurrency(amount, "short")` → `1,5 jt`
 
 ### Privacy Mask

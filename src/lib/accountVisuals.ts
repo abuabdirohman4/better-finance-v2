@@ -81,7 +81,7 @@ export function getAccountVisual(name: string): AccountVisual {
   };
 }
 
-/** Akun yang di-render pakai formatCurrency superscript (bank ATM). */
+/** Akun yang di-render pakai formatCurrency superscript (tipe Bank). */
 export function isBankAccount(accountTypeSlug: string): boolean {
-  return accountTypeSlug === "atm";
+  return accountTypeSlug === "bank";
 }

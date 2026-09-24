@@ -67,6 +67,10 @@ Header gradient + wave SVG: copy dari `src/app/(app)/page.tsx`.
 Pakai `shrink-0` bukan `flex-shrink-0` (v4 shorthand).
 Contoh: `bg-linear-to-r from-blue-600 to-indigo-800`, `bg-linear-to-br from-gray-50 to-indigo-50`.
 
+**Skala font Android (app-t82c986):** `<meta name="text-scale" content="scale">` di root layout +
+`html { font-size: clamp(16px, 100%, 18px) }` di globals.css. Font OS user diikuti tapi dibatasi 18px.
+Hindari ukuran `text-[Npx]` baru — pakai kelas rem supaya ikut skala.
+
 **Header accounts page:** back button (`ChevronLeft w-7 h-7`) + judul sejajar horizontal, bukan stacked.
 Body dimulai dengan `mt-6` (bukan `pt-2`) untuk spacing wave → content.
 

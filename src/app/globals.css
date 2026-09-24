@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
-:root {
-  --max-width: 448px;
+/* Skala font OS ikut, tapi dibatasi 16–18px biar UI konsisten antar device (app-t82c986) */
+html {
+  font-size: clamp(16px, 100%, 18px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 /* Tailwind v4 hapus cursor:pointer default di button — kembalikan (kecuali disabled) */

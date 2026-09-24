@@ -25,8 +25,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: "#f8fafc",
 };
 
@@ -35,6 +33,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className="h-full">
+      <head>
+        {/* Chrome 146+: font OS → root font-size (bukan page zoom), dibatasi di globals.css */}
+        <meta name="text-scale" content="scale" />
+      </head>
       <body className={inter.className + " min-h-full bg-slate-50"}>
         <NextIntlClientProvider>
           <QueryProvider>

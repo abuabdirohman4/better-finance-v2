@@ -30,7 +30,7 @@
 | B1 | `bf-uaw` | 3 | ↑ | sort order akun |
 | B2 | `bf-6rl` | 7 | `review-goals-budget` | goal.account_id + pre-fill. **Cek plan vs model sub-produk** (goal per produk = account_id ke sub-akun) |
 | B2 | `bf-ayj` | 5 | ↑ | budget_period (gaji tgl 25 → bulan depan). **Validasi plan lama dulu** |
-| B3 | `bf-9vf` | 5 | `review-settings` | settings + privacy persist. Cek plan 07-22 masih valid |
+| B3 | `bf-9vf` | ✅ 2026-09-24 | `review-settings` | settings + privacy persist — edit display name, plan badge, privacy toggle di /settings |
 | B3 | `bf-7m3` | 1-2 | gabung mana saja | edit tipe akun; plan docs/plans/2026-09-24-bf-7m3-edit-account-type.md |
 
 ### Fase C — Cutover: berhenti spreadsheet
@@ -171,7 +171,7 @@ Legenda: ✅ done · 🔄 sebagian · ⏳ belum
 | Investment tracker P&L | ✅ | `/net-worth/[group]` | current_value input manual + P&L per sub-produk (bf-3ai); auto price = bf-7h2 |
 | Goal account linkage | ⏳ | `/goals` | "disimpan di X" + pre-fill transfer (bf-6rl) |
 | Account detail | ⏳ | `/accounts/[id]` | Klik akun → list transaksi (bf-dac) |
-| Settings | ⏳ | `/settings` | Profil, theme, privacy (bf-9vf) |
+| Settings | ✅ | `/settings` | Profil (nama editable, plan badge), privacy toggle (bf-9vf) |
 | Landing page | ⏳ | `/` (publik) | Persona: perencana serius · diferensiasi: net worth utuh · CTA: gratis → signup (bf-3mb) |
 | PWA | 🔄 | — | Manifest + globals ada; service worker belum |
 | Tests | 🔄 | — | Vitest unit: calcUpdateDeltas ✅; Playwright E2E belum |

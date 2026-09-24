@@ -82,7 +82,7 @@ Body dimulai dengan `mt-6` (bukan `pt-2`) untuk spacing wave → content.
 
 ### Privacy Mask
 `usePrivacyStore` (Zustand) di `src/stores/privacyStore.ts` — `hideBalances: boolean`, `toggleHideBalances()`.
-Semua komponen yang tampilkan saldo WAJIB cek `hideBalances`.
+Semua komponen yang tampilkan saldo WAJIB cek `hideBalances`. Persisted per device via zustand `persist` (localStorage `bf-privacy`); toggle also in `/settings`.
 
 ### UI Components (`src/components/ui/`)
 Reusable primitives — pakai untuk semua form, filter, button di seluruh v2.
@@ -238,3 +238,4 @@ Email/password + **Google OAuth** (`signInWithOAuth`, PKCE via `@supabase/ssr`).
 - **Sign out**: `signOut` server action (`signin/actions.ts`) dipanggil via `<form action={signOut}>` di `/settings` — bukan onClick handler.
 - **Avatar**: `Avatar` (`src/components/ui/Avatar.tsx`) — foto Google dgn fallback inisial (juga saat `onError` load gagal). Sumber `avatarUrl` = `user.user_metadata.avatar_url ?? picture` di `getDashboard` (`(app)/actions.ts`), BUKAN query tabel. Pakai `<img>` biasa + `referrerPolicy="no-referrer"` (host `googleusercontent.com` belum di-allowlist `next/image`).
 - **Header dashboard** tampilkan nama + email (dulu hardcoded "Software Engineer"). Tidak ada kolom title/bio di DB.
+- **Display name** = `user_profiles.display_name` (editable in `/settings`, `updateDisplayNameAction` in `(app)/actions.ts`) → fallback `user_metadata.full_name` → email prefix. `planTier` also comes from `user_profiles` via `getUserProfile` (`src/db/queries/profile.ts`).

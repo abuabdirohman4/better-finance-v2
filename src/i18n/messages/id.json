@@ -205,7 +205,17 @@
   "settings": {
     "title": "Pengaturan",
     "language": "Bahasa",
-    "signOut": "Keluar"
+    "signOut": "Keluar",
+    "displayName": "Nama tampilan",
+    "editName": "Ubah nama",
+    "nameRequired": "Nama wajib diisi",
+    "nameTooLong": "Nama maksimal {max} karakter",
+    "profileNotFound": "Profil tidak ditemukan",
+    "planFree": "Free",
+    "planPro": "Pro",
+    "planFamily": "Family",
+    "hideBalances": "Sembunyikan saldo",
+    "hideBalancesHint": "Samarkan nominal di perangkat ini"
   },
   "nav": {
     "home": "Beranda",

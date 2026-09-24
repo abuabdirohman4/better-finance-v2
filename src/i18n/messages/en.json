@@ -205,7 +205,17 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "displayName": "Display name",
+    "editName": "Edit name",
+    "nameRequired": "Name is required",
+    "nameTooLong": "Name must be at most {max} characters",
+    "profileNotFound": "Profile not found",
+    "planFree": "Free",
+    "planPro": "Pro",
+    "planFamily": "Family",
+    "hideBalances": "Hide balances",
+    "hideBalancesHint": "Mask amounts on this device"
   },
   "nav": {
     "home": "Home",

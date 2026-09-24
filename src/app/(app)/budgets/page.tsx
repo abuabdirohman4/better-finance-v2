@@ -208,7 +208,7 @@ export default function BudgetsPage() {
         )}
 
         {/* Budget Spending Title */}
-        {!query.isLoading && (
+        {!query.isLoading && Object.keys(groups).length > 0 && (
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-gray-900 text-lg">{t("budgetSpending")}</h2>
           </div>

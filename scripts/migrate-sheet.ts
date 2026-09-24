@@ -2,9 +2,9 @@
  * Migrasi data Google Sheet v1 (2025/2026) → Postgres v2.
  *
  * Usage:
- *   pnpm tsx scripts/migrate-sheet.ts 2026 [--dry]
- *   pnpm tsx scripts/migrate-sheet.ts 2025 [--dry]
- *   pnpm tsx scripts/migrate-sheet.ts 2026 --budgets [--dry]   (bf-noo: budget targets only)
+ *   npm run migrate -- 2026 [--dry]
+ *   npm run migrate -- 2025 [--dry]
+ *   npm run migrate -- 2026 --budgets [--dry]   (bf-noo: budget targets only)
  *
  * Mode --dry: print rencana insert, tidak commit ke DB.
  *
@@ -348,7 +348,7 @@ async function main() {
   const dry = args.includes("--dry");
 
   if (!["2025", "2026"].includes(year)) {
-    console.error("Usage: pnpm tsx scripts/migrate-sheet.ts <2025|2026> [--dry]");
+    console.error("Usage: npm run migrate -- <2025|2026> [--dry]");
     process.exit(1);
   }
 
@@ -1261,7 +1261,8 @@ function parseGoalDeadline(raw: string): string | null {
   return null;
 }
 
-main().catch((err) => {
+// Explicit exit: the db pool keeps the process alive otherwise.
+main().then(() => process.exit(0)).catch((err) => {
   console.error("Fatal:", err);
   process.exit(1);
 });

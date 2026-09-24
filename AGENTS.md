@@ -196,7 +196,7 @@ Full CRUD halaman kelola kategori. Entry point: link "Manage Categories" di `/bu
 
 ## Migrasi Sheet → DB (`scripts/migrate-sheet.ts`)
 
-`pnpm migrate 2026 [--dry]` — import Google Sheet 2026 ke Postgres. Idempotent via **natural-key dedup** (bukan hash).
+`npm run migrate -- 2026 [--dry]` — import Google Sheet 2026 ke Postgres. Idempotent via **natural-key dedup** (bukan hash).
 
 - **Dedup**: `naturalKey(date|type|account_id|to_account_id|category_id|amount.toFixed(2)|note)`. Load existing key dari DB (SERTAKAN soft-deleted — biar dup yang sengaja dihapus tak masuk lagi). JANGAN pakai hash berbasis `month` — dulu bug: transaksi carry-over antar tab (muncul di tab Jul & Aug) hash beda → dobel. (Fixed 2026-08-16.)
 - **`import_row_hash`** masih diisi (kolom ada) tapi TIDAK dipakai dedup lagi — natural-key yang otoritatif.
@@ -230,7 +230,7 @@ Full CRUD halaman kelola kategori. Entry point: link "Manage Categories" di `/bu
 - Tagging from `TransactionForm`: transfer only, must touch the ledger, never together with `goal_id` (`checkDebtTag` + DB CHECK `transactions_goal_debt_exclusive`).
 - **Liability sign = natural**: a liability balance is **negative when owed**. `netWorth = Σ current_balance`. `totalLiabilities` in `getAssets` is the positive "owed" number for display only. Don't reintroduce "subtract a positive liability".
 - AR is `asset_category = 'investment'` (not spendable → out of `/accounts` + wishlist free cash). AP stays liquid + `is_liability`.
-- Gotcha: `pnpm migrate` overwrites AR/AP `current_balance` with the sheet Summary. Re-running it after debts are tracked desyncs outstanding from the ledger.
+- Gotcha: `npm run migrate` overwrites AR/AP `current_balance` with the sheet Summary. Re-running it after debts are tracked desyncs outstanding from the ledger.
 - Entry point: link card on `/net-worth` (BottomNav is full at 5 items).
 
 ## Auth: Google OAuth (bf-y6o)
